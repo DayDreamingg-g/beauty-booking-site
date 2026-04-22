@@ -2,7 +2,7 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="flex min-h-screen flex-col items-center justify-center bg-black px-6 pt-24 text-white"
+      className="snap-start flex h-screen flex-col items-center justify-center bg-black px-6 pt-24 text-white"
     >
       <h1 className="mb-6 text-center text-6xl font-bold">Beauty Booking</h1>
 

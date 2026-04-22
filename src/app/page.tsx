@@ -6,7 +6,7 @@ import Portfolio from "@/sections/Portfolio";
 
 export default function Home() {
   return (
-    <main>
+    <main className="h-screen snap-y snap-mandatory overflow-y-scroll scroll-smooth bg-black">
       <Header />
       <Hero />
       <Services />

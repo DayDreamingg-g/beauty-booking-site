@@ -10,9 +10,12 @@ export default function Header() {
           <a href="#services" className="transition hover:text-white">
             Услуги
           </a>
-          <span className="cursor-default text-gray-500">Мастера</span>
-          <span className="cursor-default text-gray-500">Портфолио</span>
-          <span className="cursor-default text-gray-500">Запись</span>
+          <a href="#masters" className="transition hover:text-white">
+            Мастера
+          </a>
+          <a href="#portfolio" className="transition hover:text-white">
+            Портфолио
+          </a>
         </nav>
       </div>
     </header>
