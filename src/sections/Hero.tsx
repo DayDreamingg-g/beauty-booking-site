@@ -1,6 +1,6 @@
 export default function Hero() {
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center bg-black text-white">
+    <section className="min-h-screen pt-24 flex flex-col items-center justify-center bg-black text-white">
       
       <h1 className="text-6xl font-bold mb-6">
         Beauty Booking
