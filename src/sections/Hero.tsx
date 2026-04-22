@@ -1,15 +1,16 @@
-export default function Hero() {
+type HeroProps = {
+  onOpenBooking: () => void;
+};
+
+export default function Hero({ onOpenBooking }: HeroProps) {
   return (
     <section
       id="top"
       className="relative flex h-screen items-center bg-black px-6 text-white"
     >
-      {/* Фоновый градиент (мягкий свет) */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-transparent" />
 
       <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 md:grid-cols-2">
-        
-        {/* Левая часть */}
         <div>
           <p className="mb-4 text-sm uppercase tracking-[0.3em] text-gray-500">
             Beauty Studio
@@ -29,12 +30,13 @@ export default function Hero() {
           </p>
 
           <div className="flex gap-4">
-            <a
-              href="#services"
+            <button
+              type="button"
+              onClick={onOpenBooking}
               className="rounded-2xl bg-white px-6 py-3 font-semibold text-black transition hover:scale-[1.03] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
             >
               Записаться
-            </a>
+            </button>
 
             <a
               href="#portfolio"
@@ -45,17 +47,13 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Правая часть (картинка) */}
         <div className="relative">
           <div className="aspect-[4/5] w-full overflow-hidden rounded-3xl border border-white/10 bg-neutral-900">
-            
             <img
               src="/images/1.jpg"
               alt="hero"
               className="h-full w-full object-cover transition duration-700 hover:scale-105"
             />
-
-            {/* затемнение снизу */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           </div>
         </div>
