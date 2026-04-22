@@ -4,7 +4,7 @@ export default function Portfolio() {
   return (
     <section
       id="portfolio"
-      className="snap-start flex h-screen items-center bg-black px-6 pt-24 text-white"
+      className="snap-start flex h-screen items-center bg-black px-6 pt-24 pb-24 text-white"
     >
       <div className="mx-auto w-full max-w-6xl">
         <h2 className="mb-12 text-center text-4xl font-bold">Портфолио</h2>

@@ -4,6 +4,7 @@ import Services from "@/sections/Services";
 import Masters from "@/sections/Masters";
 import Portfolio from "@/sections/Portfolio";
 import Contact from "@/sections/Contact";
+import Booking from "@/sections/Booking";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <Services />
       <Masters />
       <Portfolio />
+      <Booking />
       <Contact />
     </main>
   );
