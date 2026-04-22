@@ -2,20 +2,64 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="snap-start flex h-screen flex-col items-center justify-center bg-black px-6 pt-24 text-white"
+      className="relative flex h-screen items-center bg-black px-6 text-white"
     >
-      <h1 className="mb-6 text-center text-6xl font-bold">Beauty Booking</h1>
+      {/* Фоновый градиент (мягкий свет) */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-transparent" />
 
-      <p className="mb-10 text-center text-lg text-gray-400">
-        Онлайн запись в салон красоты
-      </p>
+      <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 md:grid-cols-2">
+        
+        {/* Левая часть */}
+        <div>
+          <p className="mb-4 text-sm uppercase tracking-[0.3em] text-gray-500">
+            Beauty Studio
+          </p>
 
-      <a
-        href="#services"
-        className="rounded-xl bg-white px-6 py-3 font-semibold text-black transition hover:scale-105"
-      >
-        Записаться
-      </a>
+          <h1 className="mb-6 text-5xl font-bold leading-tight md:text-6xl">
+            Минимализм.
+            <br />
+            Чистота.
+            <br />
+            Уход.
+          </h1>
+
+          <p className="mb-8 max-w-md text-gray-400 leading-7">
+            Премиальный уход и аккуратная эстетика. Мы работаем с формой,
+            цветом и деталями, чтобы результат выглядел идеально.
+          </p>
+
+          <div className="flex gap-4">
+            <a
+              href="#services"
+              className="rounded-2xl bg-white px-6 py-3 font-semibold text-black transition hover:scale-[1.03] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
+            >
+              Записаться
+            </a>
+
+            <a
+              href="#portfolio"
+              className="rounded-2xl border border-white/20 px-6 py-3 text-sm transition hover:bg-white/10"
+            >
+              Смотреть работы
+            </a>
+          </div>
+        </div>
+
+        {/* Правая часть (картинка) */}
+        <div className="relative">
+          <div className="aspect-[4/5] w-full overflow-hidden rounded-3xl border border-white/10 bg-neutral-900">
+            
+            <img
+              src="/images/1.jpg"
+              alt="hero"
+              className="h-full w-full object-cover transition duration-700 hover:scale-105"
+            />
+
+            {/* затемнение снизу */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

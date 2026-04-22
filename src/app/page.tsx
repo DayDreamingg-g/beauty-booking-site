@@ -7,7 +7,7 @@ import Contact from "@/sections/Contact";
 
 export default function Home() {
   return (
-    <main className="h-screen snap-y snap-proximity overflow-y-scroll scroll-smooth bg-black">
+    <main className="h-screen overflow-y-scroll scroll-smooth bg-black">
       <Header />
       <Hero />
       <Services />
