@@ -16,6 +16,9 @@ export default function Header() {
           <a href="#portfolio" className="transition hover:text-white">
             Портфолио
           </a>
+          <a href="#contact" className="transition hover:text-white">
+            Контакты
+          </a>
         </nav>
       </div>
     </header>
