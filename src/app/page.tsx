@@ -11,13 +11,23 @@ import BookingModal from "@/components/BookingModal";
 
 export default function Home() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState("");
+
+  const openBooking = (service?: string) => {
+    setSelectedService(service ?? "");
+    setIsBookingOpen(true);
+  };
+
+  const closeBooking = () => {
+    setIsBookingOpen(false);
+  };
 
   return (
     <>
       <main className="h-screen overflow-y-scroll scroll-smooth bg-black">
-        <Header />
-        <Hero onOpenBooking={() => setIsBookingOpen(true)} />
-        <Services />
+        <Header onOpenBooking={() => openBooking()} />
+        <Hero onOpenBooking={() => openBooking()} />
+        <Services onSelectService={(service) => openBooking(service)} />
         <Masters />
         <Portfolio />
         <Contact />
@@ -25,7 +35,8 @@ export default function Home() {
 
       <BookingModal
         isOpen={isBookingOpen}
-        onClose={() => setIsBookingOpen(false)}
+        onClose={closeBooking}
+        selectedService={selectedService}
       />
     </>
   );

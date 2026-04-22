@@ -8,7 +8,7 @@ export default function Hero({ onOpenBooking }: HeroProps) {
       id="top"
       className="relative flex h-screen items-center bg-black px-6 text-white"
     >
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-transparent" />
 
       <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 md:grid-cols-2">
         <div>
@@ -29,7 +29,7 @@ export default function Hero({ onOpenBooking }: HeroProps) {
             цветом и деталями, чтобы результат выглядел идеально.
           </p>
 
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <button
               type="button"
               onClick={onOpenBooking}
@@ -48,7 +48,7 @@ export default function Hero({ onOpenBooking }: HeroProps) {
         </div>
 
         <div className="relative">
-          <div className="aspect-[4/5] w-full overflow-hidden rounded-3xl border border-white/10 bg-neutral-900">
+          <div className="aspect-[4/5] w-full overflow-hidden rounded-3xl border border-white/10 bg-neutral-900 shadow-[0_0_60px_rgba(255,255,255,0.04)]">
             <img
               src="/images/1.jpg"
               alt="hero"

@@ -1,4 +1,8 @@
-export default function Services() {
+type ServicesProps = {
+  onSelectService: (service: string) => void;
+};
+
+export default function Services({ onSelectService }: ServicesProps) {
   const services = [
     { title: "Маникюр", price: "700₴", time: "1.5 часа" },
     { title: "Педикюр", price: "900₴", time: "2 часа" },
@@ -8,7 +12,7 @@ export default function Services() {
   return (
     <section
       id="services"
-      className="snap-start flex h-screen items-center bg-black px-6 pt-24 text-white"
+      className="flex min-h-screen items-center bg-black px-6 py-24 text-white"
     >
       <div className="mx-auto w-full max-w-6xl">
         <h2 className="mb-12 text-center text-4xl font-bold">Услуги</h2>
@@ -31,7 +35,11 @@ export default function Services() {
                 Время: {service.time}
               </p>
 
-              <button className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-black transition duration-300 group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.15)]">
+              <button
+                type="button"
+                onClick={() => onSelectService(service.title)}
+                className="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black transition duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.15)]"
+              >
                 Выбрать
               </button>
             </div>
