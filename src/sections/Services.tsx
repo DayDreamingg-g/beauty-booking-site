@@ -15,7 +15,7 @@ type ServiceItem = {
 };
 
 export default function Services({ onSelectService }: ServicesProps) {
-  const [openService, setOpenService] = useState<string | null>(null);
+  const [openServices, setOpenServices] = useState<string[]>([]);
 
   const services: ServiceItem[] = [
     {
@@ -60,8 +60,12 @@ export default function Services({ onSelectService }: ServicesProps) {
   ];
 
   const toggleService = (title: string) => {
-    setOpenService((prev) => (prev === title ? null : title));
-  };
+  setOpenServices((prev) =>
+    prev.includes(title)
+      ? prev.filter((item) => item !== title)
+      : [...prev, title]
+  );
+};
 
   return (
     <section
@@ -82,7 +86,7 @@ export default function Services({ onSelectService }: ServicesProps) {
 
         <div className="grid items-start gap-8 md:grid-cols-3">
           {services.map((service) => {
-            const isOpen = openService === service.title;
+            const isOpen = openServices.includes(service.title);
 
             return (
               <div
@@ -174,11 +178,8 @@ export default function Services({ onSelectService }: ServicesProps) {
                       </div>
                     </div>
 
-                    <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
-                      <span className="text-xs uppercase tracking-[0.18em] text-gray-500">
-                        Premium care
-                      </span>
-
+                    <div className="mt-6 flex items-center justify-end border-t border-white/10 pt-5">
+                    
                       <button
                         type="button"
                         onClick={() => onSelectService(service.title)}
