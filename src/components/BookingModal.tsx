@@ -6,19 +6,23 @@ type BookingModalProps = {
   isOpen: boolean;
   onClose: () => void;
   selectedService: string;
+  selectedMaster: string;
 };
 
 export default function BookingModal({
   isOpen,
   onClose,
   selectedService,
+  selectedMaster,
 }: BookingModalProps) {
   const [service, setService] = useState("");
+  const [master, setMaster] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setService(selectedService || "");
+      setMaster(selectedMaster || "");
       setIsSubmitted(false);
       document.body.style.overflow = "hidden";
     }
@@ -26,7 +30,7 @@ export default function BookingModal({
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isOpen, selectedService]);
+  }, [isOpen, selectedService, selectedMaster]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -106,10 +110,18 @@ export default function BookingModal({
                 <option value="Комплекс">Комплекс</option>
               </select>
 
-              <input
-                type="date"
+              <select
+                value={master}
+                onChange={(e) => setMaster(e.target.value)}
                 className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition focus:border-white/30 focus:bg-white/[0.03]"
-              />
+              >
+                <option value="" disabled>
+                  Выберите мастера
+                </option>
+                <option value="Анна">Анна</option>
+                <option value="Мария">Мария</option>
+                <option value="Ольга">Ольга</option>
+              </select>
 
               <textarea
                 placeholder="Комментарий"

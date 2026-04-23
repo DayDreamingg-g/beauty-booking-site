@@ -60,12 +60,12 @@ export default function Services({ onSelectService }: ServicesProps) {
   ];
 
   const toggleService = (title: string) => {
-  setOpenServices((prev) =>
-    prev.includes(title)
-      ? prev.filter((item) => item !== title)
-      : [...prev, title]
-  );
-};
+    setOpenServices((prev) =>
+      prev.includes(title)
+        ? prev.filter((item) => item !== title)
+        : [...prev, title]
+    );
+  };
 
   return (
     <section
@@ -122,13 +122,16 @@ export default function Services({ onSelectService }: ServicesProps) {
                         : `Показать подробности услуги ${service.title}`
                     }
                   >
-                    <span
-                      className={`block text-2xl leading-none transition-transform duration-300 ${
-                        isOpen ? "rotate-180" : "rotate-0"
-                      }`}
-                    >
-                      ⌄
-                    </span>
+                    <div className="relative flex items-center justify-center">
+                      <span className="absolute h-1.5 w-1.5 rounded-full bg-white/80 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                      <span
+                        className={`relative text-lg transition-transform duration-300 ${
+                          isOpen ? "rotate-180" : "rotate-0"
+                        }`}
+                      >
+                        ⌄
+                      </span>
+                    </div>
                   </button>
                 </div>
 
@@ -137,7 +140,7 @@ export default function Services({ onSelectService }: ServicesProps) {
                   форму и визуальный баланс.
                 </p>
 
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center justify-start gap-4">
                   <button
                     type="button"
                     onClick={() => onSelectService(service.title)}
@@ -145,7 +148,6 @@ export default function Services({ onSelectService }: ServicesProps) {
                   >
                     Выбрать
                   </button>
-
                 </div>
 
                 <div
@@ -179,7 +181,6 @@ export default function Services({ onSelectService }: ServicesProps) {
                     </div>
 
                     <div className="mt-6 flex items-center justify-end border-t border-white/10 pt-5">
-                    
                       <button
                         type="button"
                         onClick={() => onSelectService(service.title)}
