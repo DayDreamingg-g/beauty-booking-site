@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Hero from "@/sections/Hero";
 import Services from "@/sections/Services";
@@ -9,6 +9,7 @@ import Portfolio from "@/sections/Portfolio";
 import Contact from "@/sections/Contact";
 import BookingModal from "@/components/BookingModal";
 import PortfolioLightbox from "@/components/PortfolioLightbox";
+import SplashScreen from "@/components/SplashScreen";
 
 export type PortfolioItem = {
   image: string;
@@ -25,6 +26,29 @@ export default function Home() {
 
   const [isPortfolioOpen, setIsPortfolioOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  const [showSplash, setShowSplash] = useState(true);
+  const [splashVisible, setSplashVisible] = useState(false);
+
+  useEffect(() => {
+    const appearTimer = setTimeout(() => {
+      setSplashVisible(true);
+    }, 50);
+
+    const disappearTimer = setTimeout(() => {
+      setSplashVisible(false);
+    }, 1800);
+
+    const removeTimer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2500);
+
+    return () => {
+      clearTimeout(appearTimer);
+      clearTimeout(disappearTimer);
+      clearTimeout(removeTimer);
+    };
+  }, []);
 
   const portfolioItems: PortfolioItem[] = [
     {
@@ -117,7 +141,13 @@ export default function Home() {
 
   return (
     <>
-      <main className="h-screen overflow-y-scroll scroll-smooth bg-black">
+      <SplashScreen isMounted={showSplash} isVisible={splashVisible} />
+
+      <main
+        className={`h-screen overflow-y-scroll scroll-smooth bg-black transition-opacity duration-700 ${
+          showSplash ? "opacity-0" : "opacity-100"
+        }`}
+      >
         <Header onOpenBooking={() => openBooking()} />
         <Hero onOpenBooking={() => openBooking()} />
         <Services onSelectService={(service) => openBooking(service)} />
