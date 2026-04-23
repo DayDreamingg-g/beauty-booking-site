@@ -80,7 +80,7 @@ export default function Services({ onSelectService }: ServicesProps) {
           </p>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid items-start gap-8 md:grid-cols-3">
           {services.map((service) => {
             const isOpen = openService === service.title;
 
@@ -142,9 +142,6 @@ export default function Services({ onSelectService }: ServicesProps) {
                     Выбрать
                   </button>
 
-                  <span className="text-xs uppercase tracking-[0.18em] text-gray-600">
-                    Details
-                  </span>
                 </div>
 
                 <div
