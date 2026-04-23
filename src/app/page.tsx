@@ -32,42 +32,48 @@ export default function Home() {
       master: "Анна",
       procedure: "Маникюр",
       duration: "1.5 часа",
-      description: "Чистая форма, аккуратная архитектура и спокойное премиальное покрытие.",
+      description:
+        "Чистая форма, аккуратная архитектура и спокойное премиальное покрытие.",
     },
     {
       image: "/images/2.jpg",
       master: "Мария",
       procedure: "Педикюр",
       duration: "2 часа",
-      description: "Комплексный уход с акцентом на комфорт, чистоту линий и аккуратный результат.",
+      description:
+        "Комплексный уход с акцентом на комфорт, чистоту линий и аккуратный результат.",
     },
     {
       image: "/images/3.jpg",
       master: "Ольга",
       procedure: "Комплекс",
       duration: "3 часа",
-      description: "Полный уходовый формат для завершённого и визуально чистого результата.",
+      description:
+        "Полный уходовый формат для завершённого и визуально чистого результата.",
     },
     {
       image: "/images/4.jpg",
       master: "Анна",
       procedure: "Маникюр",
       duration: "1.5 часа",
-      description: "Минималистичная эстетика, точная работа с формой и мягкий блеск покрытия.",
+      description:
+        "Минималистичная эстетика, точная работа с формой и мягкий блеск покрытия.",
     },
     {
       image: "/images/5.jpg",
       master: "Мария",
       procedure: "Педикюр",
       duration: "2 часа",
-      description: "Деликатная обработка и чистая подача результата без визуального шума.",
+      description:
+        "Деликатная обработка и чистая подача результата без визуального шума.",
     },
     {
       image: "/images/6.jpg",
       master: "Ольга",
       procedure: "Комплекс",
       duration: "3 часа",
-      description: "Уход, форма и покрытие, собранные в одну цельную премиальную работу.",
+      description:
+        "Уход, форма и покрытие, собранные в одну цельную премиальную работу.",
     },
   ];
 
@@ -88,6 +94,13 @@ export default function Home() {
 
   const closePortfolio = () => {
     setIsPortfolioOpen(false);
+  };
+
+  const openBookingFromPortfolio = (service: string, master: string) => {
+    setIsPortfolioOpen(false);
+    setSelectedService(service);
+    setSelectedMaster(master);
+    setIsBookingOpen(true);
   };
 
   const showPrevImage = () => {
@@ -127,6 +140,7 @@ export default function Home() {
         selectedIndex={selectedImageIndex}
         onPrev={showPrevImage}
         onNext={showNextImage}
+        onBook={openBookingFromPortfolio}
       />
     </>
   );
