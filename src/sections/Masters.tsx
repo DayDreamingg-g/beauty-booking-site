@@ -17,26 +17,26 @@ export default function Masters({ onSelectMaster }: MastersProps) {
     {
       name: "Анна",
       role: "Топ-мастер",
-      exp: "5 лет опыта",
+      exp: "5 лет",
       image: "/images/2.jpg",
       description:
-        "Работает с чистой архитектурой формы, аккуратным покрытием и спокойной премиальной эстетикой.",
+        "Чистая форма, аккуратное покрытие и спокойная премиальная эстетика результата.",
     },
     {
       name: "Мария",
       role: "Мастер",
-      exp: "3 года опыта",
+      exp: "3 года",
       image: "/images/3.jpg",
       description:
-        "Фокусируется на комфорте клиента, мягкой подаче результата и визуальном балансе деталей.",
+        "Комфорт клиента, мягкая подача результата и внимание к деталям в каждой работе.",
     },
     {
       name: "Ольга",
       role: "Junior",
-      exp: "1 год опыта",
+      exp: "1 год",
       image: "/images/4.jpg",
       description:
-        "Аккуратный подход, внимание к уходу и деликатная работа с формой и финальным видом покрытия.",
+        "Деликатный подход, аккуратная работа с формой и ухоженный финальный вид.",
     },
   ];
 
@@ -57,46 +57,42 @@ export default function Masters({ onSelectMaster }: MastersProps) {
           </p>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid items-start gap-8 md:grid-cols-3">
           {masters.map((master) => (
             <div
               key={master.name}
-              className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] transition-all duration-500 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_0_50px_rgba(255,255,255,0.08)]"
+              className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] transition-all duration-500 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.06] hover:shadow-[0_0_50px_rgba(255,255,255,0.08)]"
             >
               <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
 
-              <div className="relative aspect-[4/5] overflow-hidden bg-neutral-900">
+              <div className="relative h-72 overflow-hidden bg-neutral-900">
                 <img
                   src={master.image}
                   alt={master.name}
                   className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                 />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <p className="mb-2 text-xs uppercase tracking-[0.22em] text-gray-400">
-                    {master.role}
-                  </p>
-
-                  <h3 className="text-2xl font-semibold tracking-tight">
-                    {master.name}
-                  </h3>
-
-                  <p className="mt-2 text-sm text-gray-400">{master.exp}</p>
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               </div>
 
               <div className="p-6">
+                <div className="mb-4 flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-2xl font-semibold tracking-tight">
+                      {master.name}
+                    </h3>
+                    <p className="mt-2 text-sm text-gray-400">{master.role}</p>
+                  </div>
+
+                  <span className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs uppercase tracking-[0.18em] text-gray-300">
+                    {master.exp}
+                  </span>
+                </div>
+
                 <p className="text-sm leading-7 text-gray-400 transition group-hover:text-gray-300">
                   {master.description}
                 </p>
 
-                <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
-                  <span className="text-xs uppercase tracking-[0.18em] text-gray-500">
-                    Personal care
-                  </span>
-
+                <div className="mt-6 flex items-center justify-end border-t border-white/10 pt-5">
                   <button
                     type="button"
                     onClick={() => onSelectMaster?.(master.name)}
