@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type BookingModalProps = {
   isOpen: boolean;
@@ -8,6 +8,114 @@ type BookingModalProps = {
   selectedService: string;
   selectedMaster: string;
 };
+
+type LuxurySelectProps = {
+  label: string;
+  placeholder: string;
+  value: string;
+  options: string[];
+  onChange: (value: string) => void;
+};
+
+function LuxurySelect({
+  label,
+  placeholder,
+  value,
+  options,
+  onChange,
+}: LuxurySelectProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!rootRef.current) return;
+      if (!rootRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false);
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  return (
+    <div ref={rootRef} className="relative">
+      <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
+        {label}
+      </p>
+
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className={`flex w-full items-center justify-between rounded-2xl border px-5 py-4 text-left text-white outline-none transition ${
+          isOpen
+            ? "border-white/30 bg-white/[0.05] shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+            : "border-white/10 bg-black/60 hover:border-white/20 hover:bg-white/[0.03]"
+        }`}
+      >
+        <span className={value ? "text-white" : "text-gray-500"}>
+          {value || placeholder}
+        </span>
+
+        <span
+          className={`ml-4 text-sm text-gray-400 transition-transform duration-300 ${
+            isOpen ? "rotate-180" : "rotate-0"
+          }`}
+        >
+          ⌄
+        </span>
+      </button>
+
+      <div
+        className={`absolute left-0 right-0 top-[calc(100%+0.75rem)] z-20 overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0d0d0d]/95 backdrop-blur-2xl transition-all duration-300 ${
+          isOpen
+            ? "pointer-events-auto translate-y-0 opacity-100 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
+            : "pointer-events-none -translate-y-2 opacity-0"
+        }`}
+      >
+        <div className="max-h-64 overflow-y-auto p-2">
+          {options.map((option) => {
+            const isSelected = value === option;
+
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => {
+                  onChange(option);
+                  setIsOpen(false);
+                }}
+                className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm transition ${
+                  isSelected
+                    ? "bg-white/[0.10] text-white"
+                    : "text-gray-300 hover:bg-white/[0.06] hover:text-white"
+                }`}
+              >
+                <span>{option}</span>
+
+                {isSelected ? (
+                  <span className="text-xs uppercase tracking-[0.18em] text-gray-400">
+                    Selected
+                  </span>
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function BookingModal({
   isOpen,
@@ -52,17 +160,19 @@ export default function BookingModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/65 px-4 backdrop-blur-md"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 px-4 backdrop-blur-xl"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-2xl rounded-[2rem] border border-white/10 bg-[#0b0b0b]/95 p-8 text-white shadow-[0_0_80px_rgba(0,0,0,0.45)] transition duration-300 md:p-10"
+        className="relative w-full max-w-2xl rounded-[2rem] border border-white/10 bg-[#0b0b0b]/95 p-8 text-white shadow-[0_0_80px_rgba(0,0,0,0.45)] md:p-10"
         onClick={(event) => event.stopPropagation()}
       >
+        <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xl text-white/70 transition hover:bg-white/10 hover:text-white"
+          className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xl text-white/70 transition hover:bg-white/10 hover:text-white"
           aria-label="Закрыть окно записи"
         >
           ×
@@ -84,49 +194,54 @@ export default function BookingModal({
               </p>
             </div>
 
-            <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit}>
-              <input
-                type="text"
-                placeholder="Ваше имя"
-                className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03]"
-              />
+            <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
+                  Имя
+                </p>
+                <input
+                  type="text"
+                  placeholder="Ваше имя"
+                  className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03]"
+                />
+              </div>
 
-              <input
-                type="tel"
-                placeholder="Телефон"
-                className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03]"
-              />
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
+                  Телефон
+                </p>
+                <input
+                  type="tel"
+                  placeholder="Телефон"
+                  className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03]"
+                />
+              </div>
 
-              <select
+              <LuxurySelect
+                label="Услуга"
+                placeholder="Выберите услугу"
                 value={service}
-                onChange={(e) => setService(e.target.value)}
-                className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition focus:border-white/30 focus:bg-white/[0.03]"
-              >
-                <option value="" disabled>
-                  Выберите услугу
-                </option>
-                <option value="Маникюр">Маникюр</option>
-                <option value="Педикюр">Педикюр</option>
-                <option value="Комплекс">Комплекс</option>
-              </select>
-
-              <select
-                value={master}
-                onChange={(e) => setMaster(e.target.value)}
-                className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition focus:border-white/30 focus:bg-white/[0.03]"
-              >
-                <option value="" disabled>
-                  Выберите мастера
-                </option>
-                <option value="Анна">Анна</option>
-                <option value="Мария">Мария</option>
-                <option value="Ольга">Ольга</option>
-              </select>
-
-              <textarea
-                placeholder="Комментарий"
-                className="min-h-[120px] rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03] md:col-span-2"
+                options={["Маникюр", "Педикюр", "Комплекс"]}
+                onChange={setService}
               />
+
+              <LuxurySelect
+                label="Мастер"
+                placeholder="Выберите мастера"
+                value={master}
+                options={["Анна", "Мария", "Ольга"]}
+                onChange={setMaster}
+              />
+
+              <div className="md:col-span-2">
+                <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
+                  Комментарий
+                </p>
+                <textarea
+                  placeholder="Комментарий"
+                  className="min-h-[120px] w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03]"
+                />
+              </div>
 
               <button
                 type="submit"
