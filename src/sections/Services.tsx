@@ -119,11 +119,11 @@ export default function Services({ onSelectService }: ServicesProps) {
                     }
                   >
                     <span
-                      className={`text-lg transition-transform duration-300 ${
-                        isOpen ? "rotate-90" : "rotate-0"
+                      className={`block text-2xl leading-none transition-transform duration-300 ${
+                        isOpen ? "rotate-180" : "rotate-0"
                       }`}
                     >
-                      →
+                      ⌄
                     </span>
                   </button>
                 </div>
@@ -148,51 +148,47 @@ export default function Services({ onSelectService }: ServicesProps) {
                 </div>
 
                 <div
-                  className={`grid transition-all duration-500 ${
-                    isOpen
-                      ? "mt-6 grid-rows-[1fr] opacity-100"
-                      : "mt-0 grid-rows-[0fr] opacity-0"
+                  className={`overflow-hidden transition-all duration-500 ${
+                    isOpen ? "mt-6 max-h-[500px] opacity-100" : "max-h-0 opacity-0"
                   }`}
                 >
-                  <div className="overflow-hidden">
-                    <div className="relative rounded-[1.75rem] border border-white/10 bg-white/[0.05] p-5 backdrop-blur-2xl">
-                      <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                  <div className="relative rounded-[1.75rem] border border-white/10 bg-white/[0.05] p-5 backdrop-blur-2xl">
+                    <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-                      <p className="mb-5 pt-2 text-sm leading-7 text-gray-300">
-                        {service.description}
+                    <p className="mb-5 pt-2 text-sm leading-7 text-gray-300">
+                      {service.description}
+                    </p>
+
+                    <div className="border-t border-white/10 pt-5">
+                      <p className="mb-4 text-xs uppercase tracking-[0.22em] text-gray-500">
+                        Что входит
                       </p>
 
-                      <div className="border-t border-white/10 pt-5">
-                        <p className="mb-4 text-xs uppercase tracking-[0.22em] text-gray-500">
-                          Что входит
-                        </p>
-
-                        <div className="space-y-3">
-                          {service.includes.map((item) => (
-                            <div
-                              key={item}
-                              className="flex items-center gap-3 text-sm text-gray-300"
-                            >
-                              <span className="h-1.5 w-1.5 rounded-full bg-white/70 shadow-[0_0_10px_rgba(255,255,255,0.7)]" />
-                              <span>{item}</span>
-                            </div>
-                          ))}
-                        </div>
+                      <div className="space-y-3">
+                        {service.includes.map((item) => (
+                          <div
+                            key={item}
+                            className="flex items-center gap-3 text-sm text-gray-300"
+                          >
+                            <span className="h-1.5 w-1.5 rounded-full bg-white/70 shadow-[0_0_10px_rgba(255,255,255,0.7)]" />
+                            <span>{item}</span>
+                          </div>
+                        ))}
                       </div>
+                    </div>
 
-                      <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
-                        <span className="text-xs uppercase tracking-[0.18em] text-gray-500">
-                          Premium care
-                        </span>
+                    <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
+                      <span className="text-xs uppercase tracking-[0.18em] text-gray-500">
+                        Premium care
+                      </span>
 
-                        <button
-                          type="button"
-                          onClick={() => onSelectService(service.title)}
-                          className="rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-2 text-sm text-white transition hover:border-white/20 hover:bg-white/[0.10]"
-                        >
-                          Записаться
-                        </button>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => onSelectService(service.title)}
+                        className="rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-2 text-sm text-white transition hover:border-white/20 hover:bg-white/[0.10]"
+                      >
+                        Записаться
+                      </button>
                     </div>
                   </div>
                 </div>
