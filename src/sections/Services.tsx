@@ -140,19 +140,23 @@ export default function Services({ onSelectService }: ServicesProps) {
                   форму и визуальный баланс.
                 </p>
 
-                <div className="flex items-center justify-start gap-4">
-                  <button
-                    type="button"
-                    onClick={() => onSelectService(service.title)}
-                    className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black transition duration-300 hover:scale-[1.03] hover:shadow-[0_0_22px_rgba(255,255,255,0.18)]"
-                  >
-                    Выбрать
-                  </button>
-                </div>
+                {!isOpen ? (
+                  <div className="flex items-center justify-start">
+                    <button
+                      type="button"
+                      onClick={() => onSelectService(service.title)}
+                      className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black transition duration-300 hover:scale-[1.03] hover:shadow-[0_0_22px_rgba(255,255,255,0.18)]"
+                    >
+                      Выбрать
+                    </button>
+                  </div>
+                ) : null}
 
                 <div
                   className={`overflow-hidden transition-all duration-500 ${
-                    isOpen ? "mt-6 max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                    isOpen
+                      ? "mt-6 max-h-[500px] opacity-100"
+                      : "max-h-0 opacity-0"
                   }`}
                 >
                   <div className="relative rounded-[1.75rem] border border-white/10 bg-white/[0.05] p-5 backdrop-blur-2xl">
