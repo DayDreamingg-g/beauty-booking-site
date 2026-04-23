@@ -51,9 +51,8 @@ export default function Masters({ onSelectMaster }: MastersProps) {
             Masters
           </p>
           <h2 className="text-4xl font-bold md:text-5xl">Мастера</h2>
-          <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-gray-500 md:text-base">
-            Специалисты с аккуратным подходом, вниманием к деталям и спокойной
-            эстетикой результата.
+          <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-gray-500 md:text-base text-center">
+            Точность, эстетика и внимание к каждой детали.
           </p>
         </div>
 
