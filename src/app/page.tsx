@@ -33,15 +33,15 @@ export default function Home() {
   useEffect(() => {
     const appearTimer = setTimeout(() => {
       setSplashVisible(true);
-    }, 50);
+    }, 80);
 
     const disappearTimer = setTimeout(() => {
       setSplashVisible(false);
-    }, 1800);
+    }, 1700);
 
     const removeTimer = setTimeout(() => {
       setShowSplash(false);
-    }, 2500);
+    }, 2400);
 
     return () => {
       clearTimeout(appearTimer);

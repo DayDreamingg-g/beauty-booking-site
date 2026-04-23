@@ -13,10 +13,8 @@ export default function SplashScreen({
 
   return (
     <div
-      className={`fixed inset-0 z-[200] flex items-center justify-center bg-black transition-all duration-700 ${
-        isVisible
-          ? "pointer-events-auto opacity-100"
-          : "pointer-events-none opacity-0"
+      className={`fixed inset-0 z-[200] flex items-center justify-center bg-black transition-opacity duration-700 ${
+        isVisible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
     >
       <div
@@ -33,7 +31,7 @@ export default function SplashScreen({
         </h1>
 
         <div className="mt-8 h-px w-40 overflow-hidden bg-white/10">
-          <div className="animate-loader-line h-full w-full bg-white/70" />
+          <div className="h-full w-20 animate-pulse bg-white/70" />
         </div>
       </div>
     </div>
