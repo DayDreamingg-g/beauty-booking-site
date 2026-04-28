@@ -46,22 +46,24 @@ export default function PortfolioLightbox({
 
   return (
     <div
-      className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 px-4 py-6 backdrop-blur-xl"
+      className="fixed inset-0 z-[110] bg-black/80 px-4 py-6 backdrop-blur-xl md:flex md:items-center md:justify-center"
       onClick={onClose}
     >
       <div
-        className="relative flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[#0b0b0b] shadow-[0_0_80px_rgba(0,0,0,0.6)] md:h-[85vh]"
+        className="relative mx-auto max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-[2rem] border border-white/10 bg-[#0b0b0b] shadow-[0_0_80px_rgba(0,0,0,0.6)] md:flex md:h-[85vh] md:flex-col md:overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <button
+          type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xl text-white/70 transition hover:bg-white/10 hover:text-white md:right-6 md:top-6"
+          className="sticky top-4 z-30 ml-auto mr-4 mt-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-black/70 text-xl text-white/80 backdrop-blur-xl transition hover:bg-white/10 hover:text-white md:absolute md:right-6 md:top-6 md:m-0"
+          aria-label="Закрыть просмотр"
         >
           ×
         </button>
 
-        <div className="grid min-h-0 flex-1 gap-5 overflow-y-auto p-5 md:grid-cols-[1.2fr_1fr] md:gap-8 md:overflow-hidden md:p-6">
-          <div className="min-h-[320px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-black md:min-h-0">
+        <div className="grid gap-5 px-5 pb-5 md:min-h-0 md:flex-1 md:grid-cols-[1.2fr_1fr] md:gap-8 md:p-6">
+          <div className="h-[360px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-black md:h-full md:min-h-0">
             <div className="flex h-full w-full items-center justify-center">
               <img
                 src={item.image}
@@ -71,7 +73,7 @@ export default function PortfolioLightbox({
             </div>
           </div>
 
-          <div className="flex min-h-0 flex-col">
+          <div className="flex flex-col">
             <div>
               <p className="mb-3 text-xs uppercase tracking-[0.2em] text-gray-500">
                 Portfolio
@@ -87,7 +89,7 @@ export default function PortfolioLightbox({
               </div>
             </div>
 
-            <div className="mt-6 min-h-0 flex-1 overflow-y-auto border-t border-white/10 pt-6 text-sm leading-7 text-gray-300">
+            <div className="mt-6 border-t border-white/10 pt-6 text-sm leading-7 text-gray-300 md:min-h-0 md:flex-1 md:overflow-y-auto">
               {item.description}
             </div>
 
@@ -105,12 +107,15 @@ export default function PortfolioLightbox({
 
         <div className="flex justify-end gap-3 border-t border-white/10 px-5 py-4 md:px-6">
           <button
+            type="button"
             onClick={onPrev}
             className="rounded-full border border-white/10 px-4 py-2 text-white transition hover:bg-white/10"
           >
             ←
           </button>
+
           <button
+            type="button"
             onClick={onNext}
             className="rounded-full border border-white/10 px-4 py-2 text-white transition hover:bg-white/10"
           >
