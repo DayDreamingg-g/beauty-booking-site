@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* ===== Base Theme ===== */
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -20,29 +19,20 @@
   }
 }
 
-/* ===== Base ===== */
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* ===== SPLASH ANIMATION ===== */
-@keyframes splash-line {
+@keyframes modalIn {
   0% {
-    transform: translateX(-100%);
-    opacity: 0.2;
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
   }
-  50% {
-    transform: translateX(0%);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(100%);
-    opacity: 0.2;
-  }
-}
 
-.splash-line {
-  animation: splash-line 1.2s ease-in-out infinite;
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }

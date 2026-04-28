@@ -180,7 +180,7 @@ export default function BookingModal({
       onClick={onClose}
     >
       <div
-        className="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-[2rem] border border-white/10 bg-[#0b0b0b]/95 p-6 text-white shadow-[0_0_80px_rgba(0,0,0,0.45)] md:p-10"
+        className="relative max-h-[92vh] w-full max-w-2xl animate-[modalIn_0.25s_ease-out] overflow-y-auto rounded-[2rem] border border-white/10 bg-[#0b0b0b]/95 p-6 text-white shadow-[0_0_80px_rgba(0,0,0,0.45)] md:p-10"
         onClick={(event) => event.stopPropagation()}
       >
         <button

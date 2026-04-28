@@ -50,7 +50,7 @@ export default function PortfolioLightbox({
       onClick={onClose}
     >
       <div
-        className="relative mx-auto max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-[2rem] border border-white/10 bg-[#0b0b0b] shadow-[0_0_80px_rgba(0,0,0,0.6)] md:flex md:h-[85vh] md:flex-col md:overflow-hidden"
+        className="relative mx-auto max-h-[92vh] w-full max-w-6xl animate-[modalIn_0.25s_ease-out] overflow-y-auto rounded-[2rem] border border-white/10 bg-[#0b0b0b] shadow-[0_0_80px_rgba(0,0,0,0.6)] md:flex md:h-[85vh] md:flex-col md:overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <button
