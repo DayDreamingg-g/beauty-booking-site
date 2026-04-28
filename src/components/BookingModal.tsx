@@ -235,6 +235,16 @@ export default function BookingModal({
 
               <div className="md:col-span-2">
                 <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
+                  Дата
+                </p>
+                <input
+                  type="date"
+                  className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition focus:border-white/30 focus:bg-white/[0.03]"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
                   Комментарий
                 </p>
                 <textarea
