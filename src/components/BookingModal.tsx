@@ -57,15 +57,17 @@ function LuxurySelect({
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`flex w-full items-center justify-between rounded-2xl border px-5 py-4 text-left text-white outline-none transition ${
+        className={`flex w-full items-center justify-between rounded-2xl border px-5 py-4 text-left outline-none transition ${
+          value
+            ? "border-white/20 bg-white/[0.04] text-white"
+            : "border-white/10 bg-black/60 text-gray-500"
+        } ${
           isOpen
-            ? "border-white/30 bg-white/[0.05] shadow-[0_0_20px_rgba(255,255,255,0.05)]"
-            : "border-white/10 bg-black/60 hover:border-white/20 hover:bg-white/[0.03]"
+            ? "border-white/30 bg-white/[0.06] shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+            : "hover:border-white/20 hover:bg-white/[0.03]"
         }`}
       >
-        <span className={value ? "text-white" : "text-gray-500"}>
-          {value || placeholder}
-        </span>
+        <span>{value || placeholder}</span>
 
         <span
           className={`ml-4 text-sm text-gray-400 transition-transform duration-300 ${
@@ -77,7 +79,7 @@ function LuxurySelect({
       </button>
 
       <div
-        className={`absolute left-0 right-0 top-[calc(100%+0.75rem)] z-20 overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0d0d0d]/95 backdrop-blur-2xl transition-all duration-300 ${
+        className={`absolute left-0 right-0 top-[calc(100%+0.75rem)] z-30 overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0d0d0d]/95 backdrop-blur-2xl transition-all duration-300 ${
           isOpen
             ? "pointer-events-auto translate-y-0 opacity-100 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
             : "pointer-events-none -translate-y-2 opacity-0"
@@ -117,20 +119,57 @@ function LuxurySelect({
   );
 }
 
+function formatPhone(value: string) {
+  const digits = value.replace(/\D/g, "").replace(/^38/, "").slice(0, 10);
+
+  const part1 = digits.slice(0, 3);
+  const part2 = digits.slice(3, 6);
+  const part3 = digits.slice(6, 8);
+  const part4 = digits.slice(8, 10);
+
+  let result = "+38";
+
+  if (part1) result += ` (${part1}`;
+  if (part1.length === 3) result += ")";
+  if (part2) result += ` ${part2}`;
+  if (part3) result += `-${part3}`;
+  if (part4) result += `-${part4}`;
+
+  return result;
+}
+
 export default function BookingModal({
   isOpen,
   onClose,
   selectedService,
   selectedMaster,
 }: BookingModalProps) {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [service, setService] = useState("");
   const [master, setMaster] = useState("");
+  const [date, setDate] = useState("");
+  const [comment, setComment] = useState("");
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const isFormValid =
+    name.trim().length >= 2 &&
+    phone.replace(/\D/g, "").length >= 12 &&
+    service &&
+    master &&
+    date;
 
   useEffect(() => {
     if (isOpen) {
       setService(selectedService || "");
       setMaster(selectedMaster || "");
+      setName("");
+      setPhone("");
+      setDate("");
+      setComment("");
+      setIsSubmitting(false);
       setIsSubmitted(false);
       document.body.style.overflow = "hidden";
     }
@@ -151,11 +190,29 @@ export default function BookingModal({
     return () => window.removeEventListener("keydown", handleEscape);
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (!isSubmitted) return;
+
+    const timer = setTimeout(() => {
+      onClose();
+    }, 2600);
+
+    return () => clearTimeout(timer);
+  }, [isSubmitted, onClose]);
+
   if (!isOpen) return null;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsSubmitted(true);
+
+    if (!isFormValid || isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+    }, 900);
   };
 
   return (
@@ -201,6 +258,8 @@ export default function BookingModal({
                 </p>
                 <input
                   type="text"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
                   placeholder="Ваше имя"
                   className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03]"
                 />
@@ -212,7 +271,9 @@ export default function BookingModal({
                 </p>
                 <input
                   type="tel"
-                  placeholder="Телефон"
+                  value={phone}
+                  onChange={(event) => setPhone(formatPhone(event.target.value))}
+                  placeholder="+38 (___) ___-__-__"
                   className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03]"
                 />
               </div>
@@ -239,6 +300,8 @@ export default function BookingModal({
                 </p>
                 <input
                   type="date"
+                  value={date}
+                  onChange={(event) => setDate(event.target.value)}
                   className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition focus:border-white/30 focus:bg-white/[0.03]"
                 />
               </div>
@@ -248,6 +311,8 @@ export default function BookingModal({
                   Комментарий
                 </p>
                 <textarea
+                  value={comment}
+                  onChange={(event) => setComment(event.target.value)}
                   placeholder="Комментарий"
                   className="min-h-[120px] w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03]"
                 />
@@ -255,9 +320,14 @@ export default function BookingModal({
 
               <button
                 type="submit"
-                className="mt-2 rounded-2xl bg-white px-6 py-4 font-semibold text-black transition hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] md:col-span-2"
+                disabled={!isFormValid || isSubmitting}
+                className={`mt-2 rounded-2xl px-6 py-4 font-semibold transition md:col-span-2 ${
+                  isFormValid && !isSubmitting
+                    ? "bg-white text-black hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+                    : "cursor-not-allowed border border-white/10 bg-white/[0.06] text-gray-500"
+                }`}
               >
-                Отправить заявку
+                {isSubmitting ? "Отправка..." : "Отправить заявку"}
               </button>
             </form>
           </>
