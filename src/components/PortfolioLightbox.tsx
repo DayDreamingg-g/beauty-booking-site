@@ -46,23 +46,22 @@ export default function PortfolioLightbox({
 
   return (
     <div
-      className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 px-6 backdrop-blur-xl"
+      className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 px-4 py-6 backdrop-blur-xl"
       onClick={onClose}
     >
       <div
-        className="relative flex h-[85vh] w-full max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[#0b0b0b] shadow-[0_0_80px_rgba(0,0,0,0.6)]"
+        className="relative flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[#0b0b0b] shadow-[0_0_80px_rgba(0,0,0,0.6)] md:h-[85vh]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute right-6 top-6 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xl text-white/70 transition hover:bg-white/10 hover:text-white"
+          className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xl text-white/70 transition hover:bg-white/10 hover:text-white md:right-6 md:top-6"
         >
           ×
         </button>
 
-        <div className="grid min-h-0 flex-1 gap-8 p-6 md:grid-cols-[1.2fr_1fr]">
-          {/* IMAGE */}
-          <div className="min-h-0 overflow-hidden rounded-[1.5rem] border border-white/10 bg-black">
+        <div className="grid min-h-0 flex-1 gap-5 overflow-y-auto p-5 md:grid-cols-[1.2fr_1fr] md:gap-8 md:overflow-hidden md:p-6">
+          <div className="min-h-[320px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-black md:min-h-0">
             <div className="flex h-full w-full items-center justify-center">
               <img
                 src={item.image}
@@ -72,7 +71,6 @@ export default function PortfolioLightbox({
             </div>
           </div>
 
-          {/* INFO */}
           <div className="flex min-h-0 flex-col">
             <div>
               <p className="mb-3 text-xs uppercase tracking-[0.2em] text-gray-500">
@@ -97,7 +95,7 @@ export default function PortfolioLightbox({
               <button
                 type="button"
                 onClick={() => onBook(item.procedure, item.master)}
-                className="rounded-xl bg-white px-6 py-3 font-semibold text-black transition duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+                className="w-full rounded-xl bg-white px-6 py-3 font-semibold text-black transition duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] md:w-auto"
               >
                 Записаться
               </button>
@@ -105,7 +103,7 @@ export default function PortfolioLightbox({
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 border-t border-white/10 px-6 py-4">
+        <div className="flex justify-end gap-3 border-t border-white/10 px-5 py-4 md:px-6">
           <button
             onClick={onPrev}
             className="rounded-full border border-white/10 px-4 py-2 text-white transition hover:bg-white/10"

@@ -4,11 +4,11 @@ type HeaderProps = {
 
 export default function Header({ onOpenBooking }: HeaderProps) {
   return (
-    <header className="fixed top-0 left-0 z-50 w-full border-b border-white/10 bg-black/70 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 text-white">
+    <header className="fixed left-0 top-0 z-50 w-full border-b border-white/10 bg-black/80 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 text-white md:px-6">
         <a
           href="#top"
-          className="text-lg font-bold tracking-tight transition hover:text-gray-300"
+          className="text-lg font-bold tracking-tight transition hover:text-gray-300 md:text-xl"
         >
           Beauty Booking
         </a>
@@ -31,7 +31,7 @@ export default function Header({ onOpenBooking }: HeaderProps) {
         <button
           type="button"
           onClick={onOpenBooking}
-          className="hidden rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-white transition hover:bg-white/10 md:inline-flex"
+          className="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black transition hover:scale-[1.02] md:rounded-2xl md:border md:border-white/15 md:bg-white/5 md:text-white md:hover:bg-white/10"
         >
           Запись
         </button>
