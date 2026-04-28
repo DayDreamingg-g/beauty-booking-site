@@ -49,7 +49,7 @@ export default function Portfolio({ items, onOpenImage }: PortfolioProps) {
                   </div>
 
                   <span className="hidden rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs uppercase tracking-[0.18em] text-gray-300 transition group-hover:border-white/20 group-hover:bg-white/[0.10] sm:inline-flex">
-                    Open
+                    Открыть
                   </span>
                 </div>
               </div>
