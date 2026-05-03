@@ -30,13 +30,17 @@ function LuxurySelect({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (!rootRef.current) return;
+
       if (!rootRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   return (
@@ -59,6 +63,7 @@ function LuxurySelect({
         }`}
       >
         <span>{value || placeholder}</span>
+
         <span
           className={`ml-4 text-sm text-gray-400 transition-transform duration-300 ${
             isOpen ? "rotate-180" : "rotate-0"
@@ -159,19 +164,58 @@ export default function BookingModal({
     };
   }, [isOpen, selectedService, selectedMaster]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!isFormValid || isSubmitting) return;
 
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const response = await fetch("/api/booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          phone,
+          service,
+          master,
+          date,
+          comment,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit booking");
+      }
+
       setIsSubmitted(true);
-    }, 900);
+    } catch (error) {
+      console.error(error);
+      alert("Не удалось отправить заявку. Попробуйте ещё раз.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -187,6 +231,7 @@ export default function BookingModal({
           type="button"
           onClick={onClose}
           className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xl text-white/70 transition hover:bg-white/10 hover:text-white"
+          aria-label="Закрыть окно записи"
         >
           ×
         </button>
@@ -212,6 +257,7 @@ export default function BookingModal({
                 <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
                   Имя
                 </p>
+
                 <input
                   type="text"
                   value={name}
@@ -225,6 +271,7 @@ export default function BookingModal({
                 <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
                   Телефон
                 </p>
+
                 <input
                   type="tel"
                   value={phone}
@@ -254,6 +301,7 @@ export default function BookingModal({
                 <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
                   Дата
                 </p>
+
                 <input
                   type="date"
                   value={date}
@@ -266,6 +314,7 @@ export default function BookingModal({
                 <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
                   Комментарий
                 </p>
+
                 <textarea
                   value={comment}
                   onChange={(event) => setComment(event.target.value)}
