@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+
+export const runtime = "nodejs";
 
 type BookingRequestBody = {
   name?: string;
@@ -25,36 +28,41 @@ export async function POST(request: Request) {
         {
           success: false,
           message: "Missing required fields",
+          received: { name, phone, service, master, date, comment },
         },
         { status: 400 }
       );
     }
 
-    const booking = {
-      name,
-      phone,
-      service,
-      master,
-      date,
-      comment,
-      createdAt: new Date().toISOString(),
-    };
+    const booking = await prisma.bookingRequest.create({
+      data: {
+        name,
+        phone,
+        service,
+        master,
+        date,
+        comment,
+      },
+    });
 
-    console.log("New booking request:", booking);
+    console.log("Saved booking request:", booking);
 
     return NextResponse.json(
       {
         success: true,
-        message: "Booking request received",
+        message: "Booking request saved",
         booking,
       },
       { status: 201 }
     );
-  } catch {
+  } catch (error) {
+    console.error("Booking API error:", error);
+
     return NextResponse.json(
       {
         success: false,
-        message: "Invalid request",
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : String(error),
       },
       { status: 500 }
     );
