@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import BookingStatusActions from "./BookingStatusActions";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,24 @@ function formatDate(date: Date) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
+}
+
+function getStatusLabel(status: string) {
+  if (status === "confirmed") return "Подтверждена";
+  if (status === "cancelled") return "Отменена";
+  return "Новая";
+}
+
+function getStatusClass(status: string) {
+  if (status === "confirmed") {
+    return "border-emerald-400/20 bg-emerald-400/10 text-emerald-200";
+  }
+
+  if (status === "cancelled") {
+    return "border-red-400/20 bg-red-400/10 text-red-200";
+  }
+
+  return "border-white/10 bg-white/[0.06] text-gray-300";
 }
 
 export default async function AdminPage() {
@@ -56,7 +75,7 @@ export default async function AdminPage() {
         ) : (
           <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04]">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[1000px] border-collapse text-left">
+              <table className="w-full min-w-[1200px] border-collapse text-left">
                 <thead>
                   <tr className="border-b border-white/10 bg-white/[0.03] text-xs uppercase tracking-[0.18em] text-gray-500">
                     <th className="px-5 py-4 font-medium">Дата заявки</th>
@@ -67,6 +86,7 @@ export default async function AdminPage() {
                     <th className="px-5 py-4 font-medium">Дата записи</th>
                     <th className="px-5 py-4 font-medium">Комментарий</th>
                     <th className="px-5 py-4 font-medium">Статус</th>
+                    <th className="px-5 py-4 font-medium">Действия</th>
                   </tr>
                 </thead>
 
@@ -110,9 +130,20 @@ export default async function AdminPage() {
                       </td>
 
                       <td className="px-5 py-5">
-                        <span className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs uppercase tracking-[0.16em] text-gray-300">
-                          {booking.status}
+                        <span
+                          className={`rounded-full border px-3 py-1 text-xs uppercase tracking-[0.16em] ${getStatusClass(
+                            booking.status
+                          )}`}
+                        >
+                          {getStatusLabel(booking.status)}
                         </span>
+                      </td>
+
+                      <td className="px-5 py-5">
+                        <BookingStatusActions
+                          bookingId={booking.id}
+                          currentStatus={booking.status}
+                        />
                       </td>
                     </tr>
                   ))}
