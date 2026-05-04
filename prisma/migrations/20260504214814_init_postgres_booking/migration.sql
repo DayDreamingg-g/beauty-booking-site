@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "BookingRequest" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "service" TEXT NOT NULL,
@@ -8,6 +8,8 @@ CREATE TABLE "BookingRequest" (
     "date" TEXT NOT NULL,
     "comment" TEXT,
     "status" TEXT NOT NULL DEFAULT 'new',
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "BookingRequest_pkey" PRIMARY KEY ("id")
 );
