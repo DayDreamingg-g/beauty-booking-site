@@ -36,3 +36,11 @@ body {
     transform: scale(1) translateY(0);
   }
 }
+
+.site-shell section {
+  background-color: transparent !important;
+}
+
+.site-shell section::before {
+  pointer-events: none;
+}

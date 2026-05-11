@@ -10,6 +10,7 @@ import Contact from "@/sections/Contact";
 import BookingModal from "@/components/BookingModal";
 import PortfolioLightbox from "@/components/PortfolioLightbox";
 import SplashScreen from "@/components/SplashScreen";
+import SiteBackground from "@/components/SiteBackground";
 
 export type PortfolioItem = {
   image: string;
@@ -143,8 +144,10 @@ export default function Home() {
     <>
       <SplashScreen isMounted={showSplash} isVisible={splashVisible} />
 
+      <SiteBackground />
+
       <main
-        className={`h-screen overflow-y-scroll scroll-smooth bg-black transition-opacity duration-700 ${
+        className={`site-shell relative z-10 h-screen overflow-y-scroll scroll-smooth bg-transparent transition-opacity duration-700 ${
           showSplash ? "opacity-0" : "opacity-100"
         }`}
       >
