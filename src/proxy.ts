@@ -27,7 +27,7 @@ export function proxy(request: NextRequest) {
     });
   }
 
-  const decoded = Buffer.from(encoded, "base64").toString("utf-8");
+  const decoded = atob(encoded);
   const separatorIndex = decoded.indexOf(":");
 
   const username = decoded.slice(0, separatorIndex);
@@ -48,5 +48,9 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/booking-status/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/api/booking-status/:path*",
+    "/api/booking-delete/:path*",
+  ],
 };

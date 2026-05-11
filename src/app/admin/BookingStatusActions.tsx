@@ -60,6 +60,41 @@ export default function BookingStatusActions({
     }
   };
 
+  const deleteBooking = async () => {
+    if (isLoading) return;
+
+    const isConfirmed = window.confirm(
+      "Удалить эту заявку? Это действие нельзя отменить."
+    );
+
+    if (!isConfirmed) return;
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/booking-delete", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: bookingId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete booking");
+      }
+
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      alert("Не удалось удалить заявку.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-wrap gap-2">
       {actions.map((action) => {
@@ -81,6 +116,17 @@ export default function BookingStatusActions({
           </button>
         );
       })}
+
+      <button
+        type="button"
+        disabled={isLoading}
+        onClick={deleteBooking}
+        className={`rounded-full border border-red-400/20 bg-red-400/10 px-3 py-2 text-xs text-red-200 transition hover:border-red-400/30 hover:bg-red-400/15 ${
+          isLoading ? "opacity-60" : ""
+        }`}
+      >
+        Удалить
+      </button>
     </div>
   );
 }
