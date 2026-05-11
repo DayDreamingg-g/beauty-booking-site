@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendBookingTelegramMessage } from "@/lib/telegram";
 
 export const runtime = "nodejs";
 
@@ -28,7 +29,6 @@ export async function POST(request: Request) {
         {
           success: false,
           message: "Missing required fields",
-          received: { name, phone, service, master, date, comment },
         },
         { status: 400 }
       );
@@ -43,6 +43,15 @@ export async function POST(request: Request) {
         date,
         comment,
       },
+    });
+
+    await sendBookingTelegramMessage({
+      name: booking.name,
+      phone: booking.phone,
+      service: booking.service,
+      master: booking.master,
+      date: booking.date,
+      comment: booking.comment || "",
     });
 
     console.log("Saved booking request:", booking);
