@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type BookingModalProps = {
   isOpen: boolean;
@@ -64,13 +64,19 @@ function LuxurySelect({
       >
         <span>{value || placeholder}</span>
 
-        <span
-          className={`ml-4 text-sm text-gray-400 transition-transform duration-300 ${
-            isOpen ? "rotate-180" : "rotate-0"
-          }`}
-        >
-          ⌄
-        </span>
+        <div className="ml-4 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-white transition duration-300 hover:border-white/20 hover:bg-white/[0.10] hover:shadow-[0_0_20px_rgba(255,255,255,0.08)]">
+          <div className="relative flex items-center justify-center">
+            <span className="absolute h-1.5 w-1.5 rounded-full bg-white/80 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+
+            <span
+              className={`relative text-lg transition-transform duration-300 ${
+                isOpen ? "rotate-180" : "rotate-0"
+              }`}
+            >
+              ⌄
+            </span>
+          </div>
+        </div>
       </button>
 
       <div
@@ -81,46 +87,70 @@ function LuxurySelect({
         }`}
       >
         <div className="max-h-64 overflow-y-auto p-2">
-          {options.map((option) => (
-            <button
-              key={option}
-              type="button"
-              onClick={() => {
-                onChange(option);
-                setIsOpen(false);
-              }}
-              className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm transition ${
-                value === option
-                  ? "bg-white/[0.10] text-white"
-                  : "text-gray-300 hover:bg-white/[0.06] hover:text-white"
-              }`}
-            >
-              <span>{option}</span>
-            </button>
-          ))}
+          {options.map((option) => {
+            const isSelected = value === option;
+
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => {
+                  onChange(option);
+                  setIsOpen(false);
+                }}
+                className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm transition ${
+                  isSelected
+                    ? "bg-white/[0.10] text-white"
+                    : "text-gray-300 hover:bg-white/[0.06] hover:text-white"
+                }`}
+              >
+                <span>{option}</span>
+
+                {isSelected ? (
+                  <span className="text-xs text-gray-300">✓</span>
+                ) : null}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
   );
 }
 
-function formatPhone(value: string) {
-  const digits = value.replace(/\D/g, "").replace(/^38/, "").slice(0, 10);
+function getPhoneDigits(value: string) {
+  return value.replace(/\D/g, "").replace(/^38/, "").slice(0, 10);
+}
 
-  const part1 = digits.slice(0, 3);
-  const part2 = digits.slice(3, 6);
-  const part3 = digits.slice(6, 8);
-  const part4 = digits.slice(8, 10);
+function formatPhoneFromDigits(digits: string) {
+  const cleanDigits = digits.replace(/\D/g, "").slice(0, 10);
+
+  const part1 = cleanDigits.slice(0, 3);
+  const part2 = cleanDigits.slice(3, 6);
+  const part3 = cleanDigits.slice(6, 8);
+  const part4 = cleanDigits.slice(8, 10);
 
   let result = "+38";
 
   if (part1) result += ` (${part1}`;
-  if (part1.length === 3) result += ")";
+  if (part1.length === 3 && (part2 || part3 || part4)) result += ")";
   if (part2) result += ` ${part2}`;
   if (part3) result += `-${part3}`;
   if (part4) result += `-${part4}`;
 
   return result;
+}
+
+function formatPhone(value: string) {
+  const digits = getPhoneDigits(value);
+
+  if (!digits) return "";
+
+  return formatPhoneFromDigits(digits);
+}
+
+function getTodayValue() {
+  return new Date().toISOString().split("T")[0];
 }
 
 export default function BookingModal({
@@ -129,22 +159,41 @@ export default function BookingModal({
   selectedService,
   selectedMaster,
 }: BookingModalProps) {
+  const timeOptions = [
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+  ];
+
+  const today = useMemo(() => getTodayValue(), []);
+
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [service, setService] = useState("");
   const [master, setMaster] = useState("");
   const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
   const [comment, setComment] = useState("");
 
+  const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const phoneDigits = phone.replace(/\D/g, "");
+
   const isFormValid =
     name.trim().length >= 2 &&
-    phone.replace(/\D/g, "").length >= 12 &&
+    phoneDigits.length === 12 &&
     service &&
     master &&
-    date;
+    date &&
+    time;
 
   useEffect(() => {
     if (isOpen) {
@@ -153,7 +202,9 @@ export default function BookingModal({
       setName("");
       setPhone("");
       setDate("");
+      setTime("");
       setComment("");
+      setErrorMessage("");
       setIsSubmitting(false);
       setIsSubmitted(false);
       document.body.style.overflow = "hidden";
@@ -182,10 +233,33 @@ export default function BookingModal({
 
   if (!isOpen) return null;
 
+  const handlePhoneFocus = () => {
+    if (!phone) {
+      setPhone("+38");
+    }
+  };
+
+  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = event.target.value;
+    const digits = getPhoneDigits(rawValue);
+
+    if (!digits) {
+      setPhone("");
+      return;
+    }
+
+    setPhone(formatPhone(rawValue));
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!isFormValid || isSubmitting) return;
+    setErrorMessage("");
+
+    if (!isFormValid || isSubmitting) {
+      setErrorMessage("Будь ласка, заповніть усі обов’язкові поля.");
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -201,6 +275,7 @@ export default function BookingModal({
           service,
           master,
           date,
+          time,
           comment,
         }),
       });
@@ -212,7 +287,7 @@ export default function BookingModal({
       setIsSubmitted(true);
     } catch (error) {
       console.error(error);
-      alert("Не удалось отправить заявку. Попробуйте ещё раз.");
+      setErrorMessage("Не вдалося відправити заявку. Спробуйте ще раз.");
     } finally {
       setIsSubmitting(false);
     }
@@ -231,7 +306,7 @@ export default function BookingModal({
           type="button"
           onClick={onClose}
           className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xl text-white/70 transition hover:bg-white/10 hover:text-white"
-          aria-label="Закрыть окно записи"
+          aria-label="Закрити вікно запису"
         >
           ×
         </button>
@@ -244,25 +319,26 @@ export default function BookingModal({
               </p>
 
               <h2 className="text-3xl font-bold md:text-4xl">
-                Оставьте заявку
+                Залиште заявку
               </h2>
 
               <p className="mt-3 max-w-lg text-gray-400">
-                Заполните форму, и мы свяжемся с вами для подтверждения записи.
+                Заповніть форму, і ми зв’яжемося з вами для підтвердження
+                запису.
               </p>
             </div>
 
             <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
               <div>
                 <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
-                  Имя
+                  Ім’я
                 </p>
 
                 <input
                   type="text"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="Ваше имя"
+                  placeholder="Ваше ім’я"
                   className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03]"
                 />
               </div>
@@ -275,29 +351,30 @@ export default function BookingModal({
                 <input
                   type="tel"
                   value={phone}
-                  onChange={(event) => setPhone(formatPhone(event.target.value))}
+                  onFocus={handlePhoneFocus}
+                  onChange={handlePhoneChange}
                   placeholder="+38 (___) ___-__-__"
                   className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03]"
                 />
               </div>
 
               <LuxurySelect
-                label="Услуга"
-                placeholder="Выберите услугу"
+                label="Послуга"
+                placeholder="Оберіть послугу"
                 value={service}
-                options={["Маникюр", "Педикюр", "Комплекс"]}
+                options={["Манікюр", "Педикюр", "Комплекс"]}
                 onChange={setService}
               />
 
               <LuxurySelect
-                label="Мастер"
-                placeholder="Выберите мастера"
+                label="Майстер"
+                placeholder="Оберіть майстра"
                 value={master}
-                options={["Анна", "Мария", "Ольга"]}
+                options={["Анна", "Марія", "Ольга"]}
                 onChange={setMaster}
               />
 
-              <div className="md:col-span-2">
+              <div>
                 <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
                   Дата
                 </p>
@@ -305,23 +382,38 @@ export default function BookingModal({
                 <input
                   type="date"
                   value={date}
+                  min={today}
                   onChange={(event) => setDate(event.target.value)}
-                  className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition focus:border-white/30 focus:bg-white/[0.03]"
+                  className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03] [color-scheme:dark]"
                 />
               </div>
 
+              <LuxurySelect
+                label="Час"
+                placeholder="Оберіть час"
+                value={time}
+                options={timeOptions}
+                onChange={setTime}
+              />
+
               <div className="md:col-span-2">
                 <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
-                  Комментарий
+                  Коментар
                 </p>
 
                 <textarea
                   value={comment}
                   onChange={(event) => setComment(event.target.value)}
-                  placeholder="Комментарий"
-                  className="min-h-[120px] w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03]"
+                  placeholder="Коментар"
+                  className="min-h-[120px] w-full resize-none rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03]"
                 />
               </div>
+
+              {errorMessage ? (
+                <div className="rounded-2xl border border-red-400/20 bg-red-400/10 px-5 py-4 text-sm text-red-200 md:col-span-2">
+                  {errorMessage}
+                </div>
+              ) : null}
 
               <button
                 type="submit"
@@ -332,7 +424,7 @@ export default function BookingModal({
                     : "cursor-not-allowed border border-white/10 bg-white/[0.06] text-gray-500"
                 }`}
               >
-                {isSubmitting ? "Отправка..." : "Отправить заявку"}
+                {isSubmitting ? "Відправка..." : "Відправити заявку"}
               </button>
             </form>
           </>
@@ -342,11 +434,11 @@ export default function BookingModal({
               ✓
             </div>
 
-            <h2 className="text-3xl font-bold">Заявка отправлена</h2>
+            <h2 className="text-3xl font-bold">Заявку відправлено</h2>
 
             <p className="mx-auto mt-4 max-w-md text-gray-400">
-              Спасибо. Мы свяжемся с вами в ближайшее время для подтверждения
-              записи.
+              Дякуємо. Ми зв’яжемося з вами найближчим часом для підтвердження
+              запису.
             </p>
 
             <button
@@ -354,7 +446,7 @@ export default function BookingModal({
               onClick={onClose}
               className="mt-8 rounded-2xl bg-white px-6 py-3 font-semibold text-black transition hover:scale-[1.02]"
             >
-              Закрыть
+              Закрити
             </button>
           </div>
         )}
@@ -362,4 +454,3 @@ export default function BookingModal({
     </div>
   );
 }
-// sdaasdasdasd

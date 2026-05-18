@@ -10,6 +10,7 @@ type BookingRequestBody = {
   service?: string;
   master?: string;
   date?: string;
+  time?: string;
   comment?: string;
 };
 
@@ -22,13 +23,14 @@ export async function POST(request: Request) {
     const service = body.service?.trim();
     const master = body.master?.trim();
     const date = body.date?.trim();
+    const time = body.time?.trim();
     const comment = body.comment?.trim() || "";
 
-    if (!name || !phone || !service || !master || !date) {
+    if (!name || !phone || !service || !master || !date || !time) {
       return NextResponse.json(
         {
           success: false,
-          message: "Missing required fields",
+          message: "Відсутні обов’язкові поля",
         },
         { status: 400 }
       );
@@ -41,6 +43,7 @@ export async function POST(request: Request) {
         service,
         master,
         date,
+        time,
         comment,
       },
     });
@@ -51,6 +54,7 @@ export async function POST(request: Request) {
       service: booking.service,
       master: booking.master,
       date: booking.date,
+      time: booking.time,
       comment: booking.comment || "",
     });
 
@@ -59,7 +63,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: true,
-        message: "Booking request saved",
+        message: "Заявку успішно збережено",
         booking,
       },
       { status: 201 }
@@ -70,7 +74,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: false,
-        message: "Internal server error",
+        message: "Внутрішня помилка сервера",
         error: error instanceof Error ? error.message : String(error),
       },
       { status: 500 }

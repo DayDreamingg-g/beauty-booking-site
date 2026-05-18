@@ -4,6 +4,7 @@ type TelegramBookingMessage = {
   service: string;
   master: string;
   date: string;
+  time: string;
   comment?: string;
 };
 
@@ -26,27 +27,31 @@ export async function sendBookingTelegramMessage(
   }
 
   const text = `
-<b>Новая заявка</b>
+<b>Нова заявка</b>
 
-<b>Имя:</b> ${escapeHtml(booking.name)}
+<b>Ім’я:</b> ${escapeHtml(booking.name)}
 <b>Телефон:</b> ${escapeHtml(booking.phone)}
-<b>Услуга:</b> ${escapeHtml(booking.service)}
-<b>Мастер:</b> ${escapeHtml(booking.master)}
+<b>Послуга:</b> ${escapeHtml(booking.service)}
+<b>Майстер:</b> ${escapeHtml(booking.master)}
 <b>Дата:</b> ${escapeHtml(booking.date)}
-<b>Комментарий:</b> ${escapeHtml(booking.comment || "—")}
+<b>Час:</b> ${escapeHtml(booking.time)}
+<b>Коментар:</b> ${escapeHtml(booking.comment || "—")}
 `.trim();
 
-  const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text,
-      parse_mode: "HTML",
-    }),
-  });
+  const response = await fetch(
+    `https://api.telegram.org/bot${token}/sendMessage`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+        parse_mode: "HTML",
+      }),
+    }
+  );
 
   if (!response.ok) {
     const errorText = await response.text();

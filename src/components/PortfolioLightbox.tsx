@@ -57,7 +57,7 @@ export default function PortfolioLightbox({
           type="button"
           onClick={onClose}
           className="sticky top-4 z-30 ml-auto mr-4 mt-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-black/70 text-xl text-white/80 backdrop-blur-xl transition hover:bg-white/10 hover:text-white md:absolute md:right-6 md:top-6 md:m-0"
-          aria-label="Закрыть просмотр"
+          aria-label="Закрити перегляд"
         >
           ×
         </button>
@@ -84,8 +84,8 @@ export default function PortfolioLightbox({
               </h3>
 
               <div className="mt-4 space-y-2 text-sm text-gray-300">
-                <p>Мастер: {item.master}</p>
-                <p>Время: {item.duration}</p>
+                <p>Майстер: {item.master}</p>
+                <p>Час: {item.duration}</p>
               </div>
             </div>
 
@@ -99,7 +99,7 @@ export default function PortfolioLightbox({
                 onClick={() => onBook(item.procedure, item.master)}
                 className="w-full rounded-xl bg-white px-6 py-3 font-semibold text-black transition duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] md:w-auto"
               >
-                Записаться
+                Записатися
               </button>
             </div>
           </div>

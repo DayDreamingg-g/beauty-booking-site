@@ -4,7 +4,7 @@ import BookingStatusActions from "./BookingStatusActions";
 export const dynamic = "force-dynamic";
 
 function formatCreatedAt(date: Date) {
-  return new Intl.DateTimeFormat("ru-RU", {
+  return new Intl.DateTimeFormat("uk-UA", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -20,7 +20,7 @@ function formatBookingDate(date: string) {
     return date;
   }
 
-  return new Intl.DateTimeFormat("ru-RU", {
+  return new Intl.DateTimeFormat("uk-UA", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -28,9 +28,9 @@ function formatBookingDate(date: string) {
 }
 
 function getStatusLabel(status: string) {
-  if (status === "confirmed") return "Подтверждена";
-  if (status === "cancelled") return "Отменена";
-  return "Новая";
+  if (status === "confirmed") return "Підтверджена";
+  if (status === "cancelled") return "Скасована";
+  return "Нова";
 }
 
 function getStatusClass(status: string) {
@@ -45,20 +45,65 @@ function getStatusClass(status: string) {
   return "border-white/10 bg-white/[0.06] text-gray-300";
 }
 
-export default async function AdminPage() {
+type AdminPageProps = {
+  searchParams?: Promise<{
+    status?: string;
+    q?: string;
+  }>;
+};
+
+export default async function AdminPage({ searchParams }: AdminPageProps) {
+  const params = await searchParams;
+
+  const statusFilter = params?.status || "all";
+  const searchQuery = (params?.q || "").trim().toLowerCase();
+
   const bookings = await prisma.bookingRequest.findMany({
     orderBy: {
       createdAt: "desc",
     },
   });
 
+  const filteredBookings = bookings.filter((booking) => {
+    const matchesStatus =
+      statusFilter === "all" || booking.status === statusFilter;
+
+    const matchesSearch =
+      !searchQuery ||
+      booking.name.toLowerCase().includes(searchQuery) ||
+      booking.phone.toLowerCase().includes(searchQuery);
+
+    return matchesStatus && matchesSearch;
+  });
+
   const newCount = bookings.filter((booking) => booking.status === "new").length;
+
   const confirmedCount = bookings.filter(
     (booking) => booking.status === "confirmed"
   ).length;
+
   const cancelledCount = bookings.filter(
     (booking) => booking.status === "cancelled"
   ).length;
+
+  const filters = [
+    {
+      value: "all",
+      label: "Усі",
+    },
+    {
+      value: "new",
+      label: "Нові",
+    },
+    {
+      value: "confirmed",
+      label: "Підтверджені",
+    },
+    {
+      value: "cancelled",
+      label: "Скасовані",
+    },
+  ];
 
   return (
     <main className="min-h-screen bg-black px-5 py-10 text-white md:px-6">
@@ -74,29 +119,28 @@ export default async function AdminPage() {
             </h1>
 
             <p className="mt-5 max-w-2xl text-sm leading-7 text-gray-400 md:text-base">
-              Здесь отображаются заявки, которые пользователи отправляют через
-              форму записи на сайте.
+              Тут відображаються заявки, які користувачі надсилають через форму запису на сайті.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4">
               <p className="text-xs uppercase tracking-[0.18em] text-gray-500">
-                Всего
+                Усього
               </p>
               <p className="mt-2 text-2xl font-semibold">{bookings.length}</p>
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4">
               <p className="text-xs uppercase tracking-[0.18em] text-gray-500">
-                Новые
+                Нові
               </p>
               <p className="mt-2 text-2xl font-semibold">{newCount}</p>
             </div>
 
             <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-5 py-4">
               <p className="text-xs uppercase tracking-[0.18em] text-emerald-200/70">
-                Ок
+                ОК
               </p>
               <p className="mt-2 text-2xl font-semibold text-emerald-100">
                 {confirmedCount}
@@ -105,7 +149,7 @@ export default async function AdminPage() {
 
             <div className="rounded-2xl border border-red-400/20 bg-red-400/10 px-5 py-4">
               <p className="text-xs uppercase tracking-[0.18em] text-red-200/70">
-                Отмена
+                Скасовано
               </p>
               <p className="mt-2 text-2xl font-semibold text-red-100">
                 {cancelledCount}
@@ -114,16 +158,61 @@ export default async function AdminPage() {
           </div>
         </div>
 
-        {bookings.length === 0 ? (
+        <div className="mb-8 flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-wrap gap-2">
+            {filters.map((filter) => (
+              <a
+                key={filter.value}
+                href={`/admin?status=${filter.value}${
+                  searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ""
+                }`}
+                className={`rounded-full border px-4 py-2 text-sm transition ${
+                  statusFilter === filter.value
+                    ? "border-white/30 bg-white text-black"
+                    : "border-white/10 bg-white/[0.04] text-gray-300 hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
+                }`}
+              >
+                {filter.label}
+              </a>
+            ))}
+          </div>
+
+          <form action="/admin" className="flex w-full gap-2 md:max-w-md">
+            <input type="hidden" name="status" value={statusFilter} />
+
+            <input
+              name="q"
+              defaultValue={searchQuery}
+              placeholder="Пошук за ім’ям або телефоном"
+              className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-black/60"
+            />
+
+            <button
+              type="submit"
+              className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:scale-[1.02]"
+            >
+              Знайти
+            </button>
+          </form>
+
+          <a
+            href="/"
+            className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-3 text-center text-sm text-white transition hover:border-white/20 hover:bg-white/[0.08]"
+          >
+            На сайт
+          </a>
+        </div>
+
+        {filteredBookings.length === 0 ? (
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-10 text-center">
-            <p className="text-lg font-semibold">Заявок пока нет</p>
+            <p className="text-lg font-semibold">Заявок не знайдено</p>
             <p className="mt-3 text-sm text-gray-500">
-              Когда пользователь отправит форму, заявка появится здесь.
+              Спробуйте змінити фільтр або очистити пошук.
             </p>
           </div>
         ) : (
           <div className="grid gap-5">
-            {bookings.map((booking) => (
+            {filteredBookings.map((booking) => (
               <article
                 key={booking.id}
                 className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] transition hover:border-white/20 hover:bg-white/[0.055]"
@@ -174,7 +263,7 @@ export default async function AdminPage() {
 
                   <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
                     <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
-                      Услуга
+                      Послуга
                     </p>
                     <p className="text-sm font-medium text-white">
                       {booking.service}
@@ -183,7 +272,7 @@ export default async function AdminPage() {
 
                   <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
                     <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
-                      Мастер
+                      Майстер
                     </p>
                     <p className="text-sm font-medium text-white">
                       {booking.master}
@@ -192,7 +281,7 @@ export default async function AdminPage() {
 
                   <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
                     <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
-                      Дата записи
+                      Дата запису
                     </p>
                     <p className="text-sm font-medium text-white">
                       {formatBookingDate(booking.date)}
@@ -203,19 +292,19 @@ export default async function AdminPage() {
                 <div className="grid gap-5 border-t border-white/10 p-6 lg:grid-cols-[1fr_auto] lg:items-end">
                   <div>
                     <p className="mb-3 text-xs uppercase tracking-[0.18em] text-gray-500">
-                      Комментарий
+                      Коментар
                     </p>
 
                     <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
                       <p className="min-h-6 text-sm leading-7 text-gray-300">
-                        {booking.comment || "Комментария нет"}
+                        {booking.comment || "Коментар відсутній"}
                       </p>
                     </div>
                   </div>
 
                   <div>
                     <p className="mb-3 text-xs uppercase tracking-[0.18em] text-gray-500">
-                      Действия
+                      Дії
                     </p>
 
                     <BookingStatusActions

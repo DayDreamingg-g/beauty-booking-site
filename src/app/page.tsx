@@ -53,52 +53,52 @@ export default function Home() {
 
   const portfolioItems: PortfolioItem[] = [
     {
-      image: "/images/1.jpg",
+      image: "/images/manicure1.jpg",
       master: "Анна",
-      procedure: "Маникюр",
-      duration: "1.5 часа",
+      procedure: "Манікюр",
+      duration: "1.5 години",
       description:
-        "Чистая форма, аккуратная архитектура и спокойное премиальное покрытие.",
+        "Чиста форма, акуратна архітектура та спокійне преміальне покриття.",
     },
     {
-      image: "/images/2.jpg",
-      master: "Мария",
+      image: "/images/pedicure1.jpg",
+      master: "Марія",
       procedure: "Педикюр",
-      duration: "2 часа",
+      duration: "2 години",
       description:
-        "Комплексный уход с акцентом на комфорт, чистоту линий и аккуратный результат.",
+        "Комплексний догляд з акцентом на комфорт, чистоту ліній та акуратний результат.",
     },
     {
-      image: "/images/3.jpg",
+      image: "/images/complex1.jpg",
       master: "Ольга",
       procedure: "Комплекс",
-      duration: "3 часа",
+      duration: "3 години",
       description:
-        "Полный уходовый формат для завершённого и визуально чистого результата.",
+        "Повний доглядовий формат для завершеного та візуально чистого результату.",
     },
     {
-      image: "/images/4.jpg",
+      image: "/images/manicure2.jpg",
       master: "Анна",
-      procedure: "Маникюр",
-      duration: "1.5 часа",
+      procedure: "Манікюр",
+      duration: "1.5 години",
       description:
-        "Минималистичная эстетика, точная работа с формой и мягкий блеск покрытия.",
+        "Мінімалістична естетика, точна робота з формою та м’який блиск покриття.",
     },
     {
-      image: "/images/5.jpg",
-      master: "Мария",
+      image: "/images/pedicure2.jpg",
+      master: "Марія",
       procedure: "Педикюр",
-      duration: "2 часа",
+      duration: "2 години",
       description:
-        "Деликатная обработка и чистая подача результата без визуального шума.",
+        "Делікатна обробка та чиста подача результату без візуального шуму.",
     },
     {
-      image: "/images/6.jpg",
+      image: "/images/complex2.jpg",
       master: "Ольга",
       procedure: "Комплекс",
-      duration: "3 часа",
+      duration: "3 години",
       description:
-        "Уход, форма и покрытие, собранные в одну цельную премиальную работу.",
+        "Догляд, форма та покриття, зібрані в одну цілісну преміальну роботу.",
     },
   ];
 
@@ -152,10 +152,20 @@ export default function Home() {
         }`}
       >
         <Header onOpenBooking={() => openBooking()} />
+
         <Hero onOpenBooking={() => openBooking()} />
+
         <Services onSelectService={(service) => openBooking(service)} />
-        <Masters onSelectMaster={(master) => openBooking(undefined, master)} />
-        <Portfolio items={portfolioItems} onOpenImage={openPortfolio} />
+
+        <Masters
+          onSelectMaster={(master) => openBooking(undefined, master)}
+        />
+
+        <Portfolio
+          items={portfolioItems}
+          onOpenImage={openPortfolio}
+        />
+
         <Contact />
       </main>
 
