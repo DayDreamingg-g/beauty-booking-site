@@ -4,7 +4,7 @@ type TelegramBookingMessage = {
   service: string;
   master: string;
   date: string;
-  time: string;
+  time?: string;
   comment?: string;
 };
 
@@ -13,6 +13,20 @@ function escapeHtml(value: string) {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
+}
+
+function formatDate(value: string) {
+  const parsedDate = new Date(value);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("uk-UA", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(parsedDate);
 }
 
 export async function sendBookingTelegramMessage(
@@ -33,8 +47,8 @@ export async function sendBookingTelegramMessage(
 <b>Телефон:</b> ${escapeHtml(booking.phone)}
 <b>Послуга:</b> ${escapeHtml(booking.service)}
 <b>Майстер:</b> ${escapeHtml(booking.master)}
-<b>Дата:</b> ${escapeHtml(booking.date)}
-<b>Час:</b> ${escapeHtml(booking.time)}
+<b>Дата:</b> ${escapeHtml(formatDate(booking.date))}
+<b>Час:</b> ${escapeHtml(booking.time || "09:00")}
 <b>Коментар:</b> ${escapeHtml(booking.comment || "—")}
 `.trim();
 

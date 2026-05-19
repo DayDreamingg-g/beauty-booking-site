@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type HeaderProps = {
   onOpenBooking: () => void;
 };
 
 export default function Header({ onOpenBooking }: HeaderProps) {
+  const router = useRouter();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [logoClickCount, setLogoClickCount] = useState(0);
 
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "";
@@ -17,7 +21,43 @@ export default function Header({ onOpenBooking }: HeaderProps) {
     };
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    if (logoClickCount === 0) return;
+
+    const resetTimer = setTimeout(() => {
+      setLogoClickCount(0);
+    }, 1800);
+
+    return () => {
+      clearTimeout(resetTimer);
+    };
+  }, [logoClickCount]);
+
   const closeMenu = () => setIsMenuOpen(false);
+
+  const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+
+    const nextCount = logoClickCount + 1;
+
+    if (nextCount >= 5) {
+      setLogoClickCount(0);
+      router.push("/admin");
+      return;
+    }
+
+    setLogoClickCount(nextCount);
+
+    if (window.location.hash !== "#top") {
+      window.location.hash = "top";
+      return;
+    }
+
+    document.getElementById("top")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   const navItems = [
     {
@@ -44,7 +84,9 @@ export default function Header({ onOpenBooking }: HeaderProps) {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 text-white sm:px-5 md:px-6 md:py-4">
           <a
             href="#top"
+            onClick={handleLogoClick}
             className="min-w-0 truncate text-base font-bold tracking-tight transition hover:text-gray-300 sm:text-lg md:text-xl"
+            title="Beauty Booking"
           >
             Beauty Booking
           </a>

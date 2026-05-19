@@ -14,7 +14,7 @@ model BookingRequest {
   service   String
   master    String
   date      String
-  time String @default("09:00")
+  time      String   @default("09:00")
   comment   String?
   status    String   @default("new")
   createdAt DateTime @default(now())

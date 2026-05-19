@@ -2,20 +2,19 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="flex min-h-screen items-center bg-black px-6 py-24 text-white"
+      className="flex min-h-screen items-center bg-transparent px-4 py-20 text-white sm:px-5 md:px-6 md:py-24"
     >
       <div className="mx-auto w-full max-w-6xl">
-        <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-[0_0_60px_rgba(255,255,255,0.03)]">
+        <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-[0_0_60px_rgba(255,255,255,0.03)] backdrop-blur-sm">
           <div className="grid md:grid-cols-2">
-            {/* Ліва частина */}
-            <div className="relative border-b border-white/10 p-8 md:border-b-0 md:border-r md:p-12">
+            <div className="relative border-b border-white/10 p-6 sm:p-8 md:border-b-0 md:border-r md:p-12">
               <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
               <p className="mb-3 text-sm uppercase tracking-[0.28em] text-gray-500">
                 Про нас
               </p>
 
-              <h2 className="max-w-md text-4xl font-bold leading-tight md:text-5xl">
+              <h2 className="max-w-md text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
                 Студія, де важливі деталі
               </h2>
 
@@ -50,8 +49,7 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Права частина */}
-            <div className="relative p-8 md:p-12">
+            <div className="relative p-6 sm:p-8 md:p-12">
               <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
               <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-[0_0_30px_rgba(255,255,255,0.02)]">

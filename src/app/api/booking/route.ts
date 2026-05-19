@@ -23,14 +23,14 @@ export async function POST(request: Request) {
     const service = body.service?.trim();
     const master = body.master?.trim();
     const date = body.date?.trim();
-    const time = body.time?.trim();
+    const time = body.time?.trim() || "09:00";
     const comment = body.comment?.trim() || "";
 
     if (!name || !phone || !service || !master || !date || !time) {
       return NextResponse.json(
         {
           success: false,
-          message: "Відсутні обов’язкові поля",
+          message: "Missing required fields",
         },
         { status: 400 }
       );
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       service: booking.service,
       master: booking.master,
       date: booking.date,
-      time: booking.time,
+      time: booking.time || "09:00",
       comment: booking.comment || "",
     });
 
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: true,
-        message: "Заявку успішно збережено",
+        message: "Booking request saved",
         booking,
       },
       { status: 201 }
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: false,
-        message: "Внутрішня помилка сервера",
+        message: "Internal server error",
         error: error instanceof Error ? error.message : String(error),
       },
       { status: 500 }

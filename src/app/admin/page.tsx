@@ -71,7 +71,9 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     const matchesSearch =
       !searchQuery ||
       booking.name.toLowerCase().includes(searchQuery) ||
-      booking.phone.toLowerCase().includes(searchQuery);
+      booking.phone.toLowerCase().includes(searchQuery) ||
+      booking.service.toLowerCase().includes(searchQuery) ||
+      booking.master.toLowerCase().includes(searchQuery);
 
     return matchesStatus && matchesSearch;
   });
@@ -106,59 +108,71 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   ];
 
   return (
-    <main className="min-h-screen bg-black px-5 py-10 text-white md:px-6">
+    <main className="min-h-screen bg-black px-4 py-8 text-white sm:px-5 md:px-6 md:py-10">
       <div className="mx-auto w-full max-w-7xl">
-        <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="mb-8 flex flex-col gap-6 md:mb-10 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="mb-3 text-xs uppercase tracking-[0.28em] text-gray-500">
               Admin Panel
             </p>
 
-            <h1 className="text-5xl font-bold tracking-tight md:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
               Заявки
             </h1>
 
             <p className="mt-5 max-w-2xl text-sm leading-7 text-gray-400 md:text-base">
-              Тут відображаються заявки, які користувачі надсилають через форму запису на сайті.
+              Тут відображаються заявки, які користувачі надсилають через форму
+              запису на сайті.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-gray-500">
-                Усього
-              </p>
-              <p className="mt-2 text-2xl font-semibold">{bookings.length}</p>
-            </div>
+          <a
+            href="/"
+            className="inline-flex w-full items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-medium text-white transition hover:border-white/20 hover:bg-white/[0.10] sm:w-auto"
+          >
+            На сайт
+          </a>
+        </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-gray-500">
-                Нові
-              </p>
-              <p className="mt-2 text-2xl font-semibold">{newCount}</p>
-            </div>
+        <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-gray-500">
+              Усього
+            </p>
 
-            <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-5 py-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-emerald-200/70">
-                ОК
-              </p>
-              <p className="mt-2 text-2xl font-semibold text-emerald-100">
-                {confirmedCount}
-              </p>
-            </div>
+            <p className="mt-2 text-2xl font-semibold">{bookings.length}</p>
+          </div>
 
-            <div className="rounded-2xl border border-red-400/20 bg-red-400/10 px-5 py-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-red-200/70">
-                Скасовано
-              </p>
-              <p className="mt-2 text-2xl font-semibold text-red-100">
-                {cancelledCount}
-              </p>
-            </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-gray-500">
+              Нові
+            </p>
+
+            <p className="mt-2 text-2xl font-semibold">{newCount}</p>
+          </div>
+
+          <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-5 py-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-emerald-200/70">
+              ОК
+            </p>
+
+            <p className="mt-2 text-2xl font-semibold text-emerald-100">
+              {confirmedCount}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-red-400/20 bg-red-400/10 px-5 py-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-red-200/70">
+              Скасовано
+            </p>
+
+            <p className="mt-2 text-2xl font-semibold text-red-100">
+              {cancelledCount}
+            </p>
           </div>
         </div>
 
-        <div className="mb-8 flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 md:flex-row md:items-center md:justify-between">
+        <div className="mb-8 flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-white/[0.04] p-4 md:flex-row md:items-center md:justify-between md:p-5">
           <div className="flex flex-wrap gap-2">
             {filters.map((filter) => (
               <a
@@ -183,7 +197,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             <input
               name="q"
               defaultValue={searchQuery}
-              placeholder="Пошук за ім’ям або телефоном"
+              placeholder="Пошук за ім’ям, телефоном, послугою"
               className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-black/60"
             />
 
@@ -194,18 +208,12 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               Знайти
             </button>
           </form>
-
-          <a
-            href="/"
-            className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-3 text-center text-sm text-white transition hover:border-white/20 hover:bg-white/[0.08]"
-          >
-            На сайт
-          </a>
         </div>
 
         {filteredBookings.length === 0 ? (
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-10 text-center">
             <p className="text-lg font-semibold">Заявок не знайдено</p>
+
             <p className="mt-3 text-sm text-gray-500">
               Спробуйте змінити фільтр або очистити пошук.
             </p>
@@ -217,7 +225,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 key={booking.id}
                 className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] transition hover:border-white/20 hover:bg-white/[0.055]"
               >
-                <div className="flex flex-col gap-5 border-b border-white/10 p-6 md:flex-row md:items-start md:justify-between">
+                <div className="flex flex-col gap-5 border-b border-white/10 p-5 md:flex-row md:items-start md:justify-between md:p-6">
                   <div>
                     <div className="mb-3 flex flex-wrap items-center gap-3">
                       <h2 className="text-2xl font-semibold tracking-tight">
@@ -242,17 +250,19 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                     <p className="text-xs uppercase tracking-[0.18em] text-gray-500">
                       Дата заявки
                     </p>
+
                     <p className="mt-2 text-sm text-gray-300">
                       {formatCreatedAt(booking.createdAt)}
                     </p>
                   </div>
                 </div>
 
-                <div className="grid gap-4 p-6 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-5 md:p-6">
                   <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
                     <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
                       Телефон
                     </p>
+
                     <a
                       href={`tel:${booking.phone}`}
                       className="text-sm font-medium text-white transition hover:text-gray-300"
@@ -265,6 +275,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                     <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
                       Послуга
                     </p>
+
                     <p className="text-sm font-medium text-white">
                       {booking.service}
                     </p>
@@ -274,6 +285,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                     <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
                       Майстер
                     </p>
+
                     <p className="text-sm font-medium text-white">
                       {booking.master}
                     </p>
@@ -283,13 +295,24 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                     <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
                       Дата запису
                     </p>
+
                     <p className="text-sm font-medium text-white">
                       {formatBookingDate(booking.date)}
                     </p>
                   </div>
+
+                  <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
+                    <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
+                      Час
+                    </p>
+
+                    <p className="text-sm font-medium text-white">
+                      {booking.time || "09:00"}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="grid gap-5 border-t border-white/10 p-6 lg:grid-cols-[1fr_auto] lg:items-end">
+                <div className="grid gap-5 border-t border-white/10 p-5 lg:grid-cols-[1fr_auto] lg:items-end md:p-6">
                   <div>
                     <p className="mb-3 text-xs uppercase tracking-[0.18em] text-gray-500">
                       Коментар
