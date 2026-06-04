@@ -1,190 +1,124 @@
-"use client";
+import { prisma } from "@/lib/prisma";
+import HomeClient from "./HomeClient";
 
-import { useEffect, useState } from "react";
-import Header from "@/components/Header";
-import Hero from "@/sections/Hero";
-import Services from "@/sections/Services";
-import Masters from "@/sections/Masters";
-import Portfolio from "@/sections/Portfolio";
-import Contact from "@/sections/Contact";
-import BookingModal from "@/components/BookingModal";
-import PortfolioLightbox from "@/components/PortfolioLightbox";
-import SplashScreen from "@/components/SplashScreen";
-import SiteBackground from "@/components/SiteBackground";
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+export type ServiceItem = {
+  id: string;
+  title: string;
+  price: string;
+  time: string;
+  description: string;
+  includes: string[];
+  image: string;
+};
+
+export type MasterItem = {
+  id: string;
+  name: string;
+  role: string;
+  image: string;
+  description: string;
+};
 
 export type PortfolioItem = {
+  id: string;
   image: string;
-  master: string;
   procedure: string;
+  master: string;
   duration: string;
   description: string;
 };
 
-export default function Home() {
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState("");
-  const [selectedMaster, setSelectedMaster] = useState("");
+function splitIncludes(value: string) {
+  return value
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
 
-  const [isPortfolioOpen, setIsPortfolioOpen] = useState(false);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+const fallbackServices: ServiceItem[] = [];
 
-  const [showSplash, setShowSplash] = useState(true);
-  const [splashVisible, setSplashVisible] = useState(false);
+const fallbackMasters: MasterItem[] = [];
 
-  useEffect(() => {
-    const appearTimer = setTimeout(() => {
-      setSplashVisible(true);
-    }, 80);
+const fallbackPortfolio: PortfolioItem[] = [];
 
-    const disappearTimer = setTimeout(() => {
-      setSplashVisible(false);
-    }, 1700);
+export default async function Page() {
+  const [dbServices, dbMasters, dbPortfolioItems] = await Promise.all([
+    prisma.service.findMany({
+      where: {
+        isActive: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    }),
 
-    const removeTimer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2400);
+    prisma.master.findMany({
+      where: {
+        isActive: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    }),
 
-    return () => {
-      clearTimeout(appearTimer);
-      clearTimeout(disappearTimer);
-      clearTimeout(removeTimer);
-    };
-  }, []);
+    prisma.portfolioItem.findMany({
+      where: {
+        isActive: true,
+      },
+      include: {
+        service: true,
+        master: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+  ]);
 
-  const portfolioItems: PortfolioItem[] = [
-    {
-      image: "/images/manicure1.jpg",
-      master: "Анна",
-      procedure: "Манікюр",
-      duration: "1.5 години",
-      description:
-        "Чиста форма, акуратна архітектура та спокійне преміальне покриття.",
-    },
-    {
-      image: "/images/pedicure1.jpg",
-      master: "Марія",
-      procedure: "Педикюр",
-      duration: "2 години",
-      description:
-        "Комплексний догляд з акцентом на комфорт, чистоту ліній та акуратний результат.",
-    },
-    {
-      image: "/images/complex1.jpg",
-      master: "Ольга",
-      procedure: "Комплекс",
-      duration: "3 години",
-      description:
-        "Повний доглядовий формат для завершеного та візуально чистого результату.",
-    },
-    {
-      image: "/images/manicure2.jpg",
-      master: "Анна",
-      procedure: "Манікюр",
-      duration: "1.5 години",
-      description:
-        "Мінімалістична естетика, точна робота з формою та м’який блиск покриття.",
-    },
-    {
-      image: "/images/pedicure2.jpg",
-      master: "Марія",
-      procedure: "Педикюр",
-      duration: "2 години",
-      description:
-        "Делікатна обробка та чиста подача результату без візуального шуму.",
-    },
-    {
-      image: "/images/complex2.jpg",
-      master: "Ольга",
-      procedure: "Комплекс",
-      duration: "3 години",
-      description:
-        "Догляд, форма та покриття, зібрані в одну цілісну преміальну роботу.",
-    },
-  ];
+  const services: ServiceItem[] =
+    dbServices.length > 0
+      ? dbServices.map((service) => ({
+          id: service.id,
+          title: service.title,
+          price: service.price,
+          time: service.duration,
+          description: service.description,
+          includes: splitIncludes(service.includes),
+          image: service.image,
+        }))
+      : fallbackServices;
 
-  const openBooking = (service?: string, master?: string) => {
-    setSelectedService(service ?? "");
-    setSelectedMaster(master ?? "");
-    setIsBookingOpen(true);
-  };
+  const masters: MasterItem[] =
+    dbMasters.length > 0
+      ? dbMasters.map((master) => ({
+          id: master.id,
+          name: master.name,
+          role: master.role,
+          image: master.image,
+          description: master.description,
+        }))
+      : fallbackMasters;
 
-  const closeBooking = () => {
-    setIsBookingOpen(false);
-  };
-
-  const openPortfolio = (index: number) => {
-    setSelectedImageIndex(index);
-    setIsPortfolioOpen(true);
-  };
-
-  const closePortfolio = () => {
-    setIsPortfolioOpen(false);
-  };
-
-  const openBookingFromPortfolio = (service: string, master: string) => {
-    setIsPortfolioOpen(false);
-    setSelectedService(service);
-    setSelectedMaster(master);
-    setIsBookingOpen(true);
-  };
-
-  const showPrevImage = () => {
-    setSelectedImageIndex((prev) =>
-      prev === 0 ? portfolioItems.length - 1 : prev - 1
-    );
-  };
-
-  const showNextImage = () => {
-    setSelectedImageIndex((prev) =>
-      prev === portfolioItems.length - 1 ? 0 : prev + 1
-    );
-  };
+  const portfolioItems: PortfolioItem[] =
+    dbPortfolioItems.length > 0
+      ? dbPortfolioItems.map((item) => ({
+          id: item.id,
+          image: item.image,
+          procedure: item.service.title,
+          master: item.master.name,
+          duration: item.duration,
+          description: item.description,
+        }))
+      : fallbackPortfolio;
 
   return (
-    <>
-      <SplashScreen isMounted={showSplash} isVisible={splashVisible} />
-
-      <SiteBackground />
-
-      <main
-        className={`site-shell relative z-10 h-screen overflow-y-scroll scroll-smooth bg-transparent transition-opacity duration-700 ${
-          showSplash ? "opacity-0" : "opacity-100"
-        }`}
-      >
-        <Header onOpenBooking={() => openBooking()} />
-
-        <Hero onOpenBooking={() => openBooking()} />
-
-        <Services onSelectService={(service) => openBooking(service)} />
-
-        <Masters
-          onSelectMaster={(master) => openBooking(undefined, master)}
-        />
-
-        <Portfolio
-          items={portfolioItems}
-          onOpenImage={openPortfolio}
-        />
-
-        <Contact />
-      </main>
-
-      <BookingModal
-        isOpen={isBookingOpen}
-        onClose={closeBooking}
-        selectedService={selectedService}
-        selectedMaster={selectedMaster}
-      />
-
-      <PortfolioLightbox
-        isOpen={isPortfolioOpen}
-        onClose={closePortfolio}
-        items={portfolioItems}
-        selectedIndex={selectedImageIndex}
-        onPrev={showPrevImage}
-        onNext={showNextImage}
-        onBook={openBookingFromPortfolio}
-      />
-    </>
+    <HomeClient
+      services={services}
+      masters={masters}
+      portfolioItems={portfolioItems}
+    />
   );
 }

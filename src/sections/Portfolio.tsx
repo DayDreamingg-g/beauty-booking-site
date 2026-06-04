@@ -34,51 +34,63 @@ export default function Portfolio({ items, onOpenImage }: PortfolioProps) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-8">
-          {items.map((item, index) => (
-            <button
-              key={`${item.image}-${index}`}
-              type="button"
-              onClick={() => onOpenImage(index)}
-              className="group relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] text-left backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.06] hover:shadow-[0_0_45px_rgba(255,255,255,0.10)]"
-            >
-              <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
+        {items.length === 0 ? (
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-10 text-center">
+            <p className="text-lg font-semibold text-white">
+              Робіт поки немає
+            </p>
 
-              <img
-                src={item.image}
-                alt={`${item.procedure} - ${item.master}`}
-                className="h-full w-full object-cover opacity-95 transition duration-700 group-hover:scale-105 md:group-hover:scale-110"
-              />
+            <p className="mt-3 text-sm text-gray-500">
+              Додайте першу роботу в адмінці.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-8">
+            {items.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onOpenImage(index)}
+                className="group relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] text-left backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.06] hover:shadow-[0_0_45px_rgba(255,255,255,0.10)]"
+              >
+                <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent" />
+                <img
+                  src={item.image}
+                  alt={`${item.procedure} - ${item.master}`}
+                  className="h-full w-full object-cover opacity-95 transition duration-700 group-hover:scale-105 md:group-hover:scale-110"
+                />
 
-              <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs uppercase tracking-[0.18em] text-gray-300 backdrop-blur-xl">
-                {String(index + 1).padStart(2, "0")}
-              </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent" />
 
-              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
-                <div className="rounded-[1.5rem] border border-white/10 bg-black/35 p-4 backdrop-blur-xl transition duration-300 group-hover:border-white/20 group-hover:bg-black/45">
-                  <div className="flex items-end justify-between gap-4">
-                    <div>
-                      <p className="mb-2 text-xs uppercase tracking-[0.2em] text-gray-400 md:tracking-[0.22em]">
-                        {item.procedure}
-                      </p>
+                <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs uppercase tracking-[0.18em] text-gray-300 backdrop-blur-xl">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
 
-                      <p className="text-sm font-medium text-white/90 sm:text-base">
-                        {item.master}
-                      </p>
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
+                  <div className="rounded-[1.5rem] border border-white/10 bg-black/35 p-4 backdrop-blur-xl transition duration-300 group-hover:border-white/20 group-hover:bg-black/45">
+                    <div className="flex items-end justify-between gap-4">
+                      <div>
+                        <p className="mb-2 text-xs uppercase tracking-[0.2em] text-gray-400 md:tracking-[0.22em]">
+                          {item.procedure}
+                        </p>
+
+                        <p className="text-sm font-medium text-white/90 sm:text-base">
+                          {item.master}
+                        </p>
+                      </div>
+
+                      <span className="hidden shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs uppercase tracking-[0.18em] text-gray-300 transition group-hover:border-white/20 group-hover:bg-white/[0.10] sm:inline-flex">
+                        Відкрити
+                      </span>
                     </div>
-
-                    <span className="hidden shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs uppercase tracking-[0.18em] text-gray-300 transition group-hover:border-white/20 group-hover:bg-white/[0.10] sm:inline-flex">
-                      Відкрити
-                    </span>
                   </div>
                 </div>
-              </div>
-            </button>
-          ))}
-        </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

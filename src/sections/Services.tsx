@@ -1,63 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import type { ServiceItem } from "@/app/page";
 
 type ServicesProps = {
+  services: ServiceItem[];
   onSelectService: (service: string) => void;
 };
 
-type ServiceItem = {
-  title: string;
-  price: string;
-  time: string;
-  description: string;
-  includes: string[];
-};
-
-export default function Services({ onSelectService }: ServicesProps) {
+export default function Services({ services, onSelectService }: ServicesProps) {
   const [openServices, setOpenServices] = useState<string[]>([]);
-
-  const services: ServiceItem[] = [
-    {
-      title: "Манікюр",
-      price: "700₴",
-      time: "1.5 години",
-      description:
-        "Акуратна обробка нігтів і кутикули з чистою формою, м’якою архітектурою та естетичним покриттям.",
-      includes: [
-        "Обробка кутикули",
-        "Вирівнювання форми нігтів",
-        "Покриття та фініш",
-        "Догляд за руками",
-      ],
-    },
-    {
-      title: "Педикюр",
-      price: "900₴",
-      time: "2 години",
-      description:
-        "Комплексний догляд за стопами та нігтями з акцентом на комфорт, чистоту ліній та акуратний візуальний результат.",
-      includes: [
-        "Обробка стоп",
-        "Робота з кутикулою",
-        "Покриття нігтів",
-        "Фінальний догляд",
-      ],
-    },
-    {
-      title: "Комплекс",
-      price: "1400₴",
-      time: "3 години",
-      description:
-        "Повний доглядовий формат для тих, хто хоче завершений преміальний результат за одне відвідування.",
-      includes: [
-        "Манікюр + педикюр",
-        "Комплексна обробка",
-        "Покриття",
-        "Догляд і фінальне полірування",
-      ],
-    },
-  ];
 
   const toggleService = (title: string) => {
     setOpenServices((prev) =>
@@ -101,7 +53,7 @@ export default function Services({ onSelectService }: ServicesProps) {
 
             return (
               <div
-                key={service.title}
+                key={service.id}
                 className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.06] hover:shadow-[0_0_50px_rgba(255,255,255,0.08)] sm:p-6"
               >
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
@@ -144,8 +96,7 @@ export default function Services({ onSelectService }: ServicesProps) {
                 </div>
 
                 <p className="mb-7 text-sm leading-7 text-gray-400">
-                  Персоналізований догляд з акцентом на чистий результат,
-                  форму та візуальний баланс.
+                  {service.description}
                 </p>
 
                 {!isOpen ? (
@@ -166,10 +117,6 @@ export default function Services({ onSelectService }: ServicesProps) {
                   }`}
                 >
                   <div className="relative rounded-[1.75rem] border border-white/10 bg-black/20 p-5 backdrop-blur-2xl">
-                    <p className="mb-5 text-sm leading-7 text-gray-300">
-                      {service.description}
-                    </p>
-
                     <div className="border-t border-white/10 pt-5">
                       <p className="mb-4 text-xs uppercase tracking-[0.22em] text-gray-500">
                         Що входить
@@ -182,6 +129,7 @@ export default function Services({ onSelectService }: ServicesProps) {
                             className="flex items-center gap-3 text-sm text-gray-300"
                           >
                             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/70 shadow-[0_0_10px_rgba(255,255,255,0.7)]" />
+
                             <span>{item}</span>
                           </div>
                         ))}

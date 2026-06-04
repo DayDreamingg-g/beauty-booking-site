@@ -1,45 +1,13 @@
 "use client";
 
+import type { MasterItem } from "@/app/page";
+
 type MastersProps = {
+  masters: MasterItem[];
   onSelectMaster?: (master: string) => void;
 };
 
-type MasterItem = {
-  name: string;
-  role: string;
-  exp: string;
-  image: string;
-  description: string;
-};
-
-export default function Masters({ onSelectMaster }: MastersProps) {
-  const masters: MasterItem[] = [
-    {
-      name: "Анна",
-      role: "Топмайстер",
-      exp: "5 років",
-      image: "/images/master1.jpg",
-      description:
-        "Чиста форма, акуратне покриття та спокійна преміальна естетика результату.",
-    },
-    {
-      name: "Марія",
-      role: "Майстер",
-      exp: "3 роки",
-      image: "/images/master2.jpg",
-      description:
-        "Комфорт клієнта, м’яка подача результату та увага до деталей у кожній роботі.",
-    },
-    {
-      name: "Ольга",
-      role: "Junior",
-      exp: "1 рік",
-      image: "/images/master3.jpg",
-      description:
-        "Делікатний підхід, акуратна робота з формою та доглянутий фінальний вигляд.",
-    },
-  ];
-
+export default function Masters({ masters, onSelectMaster }: MastersProps) {
   return (
     <section
       id="masters"
@@ -71,7 +39,7 @@ export default function Masters({ onSelectMaster }: MastersProps) {
         <div className="grid items-start gap-5 sm:gap-6 md:grid-cols-3 md:gap-8">
           {masters.map((master) => (
             <div
-              key={master.name}
+              key={master.id}
               className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.06] hover:shadow-[0_0_50px_rgba(255,255,255,0.08)]"
             >
               <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
@@ -89,10 +57,6 @@ export default function Masters({ onSelectMaster }: MastersProps) {
                 <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
                   <span className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs uppercase tracking-[0.18em] text-gray-300 backdrop-blur-xl">
                     {master.role}
-                  </span>
-
-                  <span className="rounded-full border border-white/10 bg-white/[0.08] px-3 py-1 text-xs uppercase tracking-[0.16em] text-gray-200 backdrop-blur-xl">
-                    {master.exp}
                   </span>
                 </div>
               </div>
