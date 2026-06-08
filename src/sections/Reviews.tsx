@@ -22,6 +22,8 @@ type LuxurySelectProps = {
   onChange: (value: string) => void;
 };
 
+const REVIEWS_PER_PAGE = 5;
+
 function formatReviewDate(value: string) {
   const date = new Date(value);
 
@@ -155,6 +157,7 @@ export default function Reviews({
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const masterOptions = masters.map((master) => ({
     value: master.id,
@@ -168,6 +171,32 @@ export default function Reviews({
 
     return reviews.filter((review) => review.masterId === selectedMasterId);
   }, [reviews, selectedMasterId]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredReviews.length / REVIEWS_PER_PAGE)
+  );
+
+  const paginatedReviews = useMemo(() => {
+    const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
+    const endIndex = startIndex + REVIEWS_PER_PAGE;
+
+    return filteredReviews.slice(startIndex, endIndex);
+  }, [filteredReviews, currentPage]);
+
+  useEffect(() => {
+    setReviews(initialReviews);
+  }, [initialReviews]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedMasterId]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const uploadImage = async (file: File) => {
     setIsUploading(true);
@@ -236,6 +265,7 @@ export default function Reviews({
       setMasterId("");
       setRating(5);
       setImageUrl("");
+      setCurrentPage(1);
       setMessage("Дякуємо, відгук додано.");
     } catch (error) {
       console.error(error);
@@ -376,7 +406,10 @@ export default function Reviews({
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
-                  onClick={() => onSelectMaster("all")}
+                  onClick={() => {
+                    onSelectMaster("all");
+                    setCurrentPage(1);
+                  }}
                   className={`rounded-full border px-4 py-2 text-sm transition ${
                     selectedMasterId === "all"
                       ? "border-white/30 bg-white text-black"
@@ -390,7 +423,10 @@ export default function Reviews({
                   <button
                     key={master.id}
                     type="button"
-                    onClick={() => onSelectMaster(master.id)}
+                    onClick={() => {
+                      onSelectMaster(master.id);
+                      setCurrentPage(1);
+                    }}
                     className={`rounded-full border px-4 py-2 text-sm transition ${
                       selectedMasterId === master.id
                         ? "border-white/30 bg-white text-black"
@@ -404,7 +440,7 @@ export default function Reviews({
             </div>
 
             <div className="grid gap-4">
-              {filteredReviews.length === 0 ? (
+              {paginatedReviews.length === 0 ? (
                 <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] px-6 py-10 text-center">
                   <p className="text-base font-semibold text-white">
                     Відгуків поки немає
@@ -415,7 +451,7 @@ export default function Reviews({
                   </p>
                 </div>
               ) : (
-                filteredReviews.map((review) => {
+                paginatedReviews.map((review) => {
                   const reviewDate = formatReviewDate(review.createdAt);
 
                   return (
@@ -476,6 +512,51 @@ export default function Reviews({
                 })
               )}
             </div>
+
+            {filteredReviews.length > REVIEWS_PER_PAGE ? (
+              <div className="flex flex-wrap items-center justify-center gap-2 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(1, prev - 1))
+                  }
+                  disabled={currentPage === 1}
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-gray-300 transition hover:bg-white/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Назад
+                </button>
+
+                {Array.from({ length: totalPages }).map((_, index) => {
+                  const page = index + 1;
+
+                  return (
+                    <button
+                      key={page}
+                      type="button"
+                      onClick={() => setCurrentPage(page)}
+                      className={`flex h-10 w-10 items-center justify-center rounded-full border text-sm transition ${
+                        currentPage === page
+                          ? "border-white/30 bg-white text-black"
+                          : "border-white/10 bg-white/[0.04] text-gray-300 hover:bg-white/[0.08] hover:text-white"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-gray-300 transition hover:bg-white/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Далі
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
