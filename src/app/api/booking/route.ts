@@ -4,7 +4,7 @@ import { sendBookingTelegramMessage } from "@/lib/telegram";
 
 export const runtime = "nodejs";
 
-type BookingRequestBody = {
+type BookingBody = {
   name?: string;
   phone?: string;
   service?: string;
@@ -14,25 +14,52 @@ type BookingRequestBody = {
   comment?: string;
 };
 
+function getString(value: unknown) {
+  return String(value || "").trim();
+}
+
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as BookingRequestBody;
+    const body = (await request.json()) as BookingBody;
 
-    const name = body.name?.trim();
-    const phone = body.phone?.trim();
-    const service = body.service?.trim();
-    const master = body.master?.trim();
-    const date = body.date?.trim();
-    const time = body.time?.trim() || "09:00";
-    const comment = body.comment?.trim() || "";
+    const name = getString(body.name);
+    const phone = getString(body.phone);
+    const service = getString(body.service);
+    const master = getString(body.master);
+    const date = getString(body.date);
+    const time = getString(body.time);
+    const comment = getString(body.comment);
 
     if (!name || !phone || !service || !master || !date || !time) {
       return NextResponse.json(
         {
           success: false,
-          message: "Missing required fields",
+          message: "Заповніть усі обов’язкові поля.",
         },
         { status: 400 }
+      );
+    }
+
+    const existingBooking = await prisma.bookingRequest.findFirst({
+      where: {
+        date,
+        time,
+        status: {
+          in: ["new", "confirmed"],
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (existingBooking) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "TIME_ALREADY_BOOKED",
+        },
+        { status: 409 }
       );
     }
 
@@ -45,37 +72,31 @@ export async function POST(request: Request) {
         date,
         time,
         comment,
+        status: "new",
       },
     });
 
     await sendBookingTelegramMessage({
-      name: booking.name,
-      phone: booking.phone,
-      service: booking.service,
-      master: booking.master,
-      date: booking.date,
-      time: booking.time || "09:00",
-      comment: booking.comment || "",
+      name,
+      phone,
+      service,
+      master,
+      date,
+      time,
+      comment,
     });
 
-    console.log("Saved booking request:", booking);
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Booking request saved",
-        booking,
-      },
-      { status: 201 }
-    );
+    return NextResponse.json({
+      success: true,
+      booking,
+    });
   } catch (error) {
-    console.error("Booking API error:", error);
+    console.error(error);
 
     return NextResponse.json(
       {
         success: false,
-        message: "Internal server error",
-        error: error instanceof Error ? error.message : String(error),
+        message: "Не вдалося створити заявку.",
       },
       { status: 500 }
     );

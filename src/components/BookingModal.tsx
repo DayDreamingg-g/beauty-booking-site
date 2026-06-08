@@ -17,7 +17,21 @@ type LuxurySelectProps = {
   value: string;
   options: string[];
   onChange: (value: string) => void;
+  disabled?: boolean;
 };
+
+const BASE_TIME_OPTIONS = [
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+  "18:00",
+];
 
 function LuxurySelect({
   label,
@@ -25,6 +39,7 @@ function LuxurySelect({
   value,
   options,
   onChange,
+  disabled = false,
 }: LuxurySelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -53,7 +68,11 @@ function LuxurySelect({
 
       <button
         type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
+        disabled={disabled}
+        onClick={() => {
+          if (disabled) return;
+          setIsOpen((prev) => !prev);
+        }}
         className={`flex w-full items-center justify-between rounded-2xl border px-5 py-4 text-left outline-none transition ${
           value
             ? "border-white/20 bg-white/[0.04] text-white"
@@ -62,6 +81,10 @@ function LuxurySelect({
           isOpen
             ? "border-white/30 bg-white/[0.06]"
             : "hover:border-white/20 hover:bg-white/[0.03]"
+        } ${
+          disabled
+            ? "cursor-not-allowed opacity-50 hover:border-white/10 hover:bg-black/60"
+            : ""
         }`}
       >
         <span>{value || placeholder}</span>
@@ -87,33 +110,39 @@ function LuxurySelect({
         }`}
       >
         <div className="max-h-64 overflow-y-auto p-2">
-          {options.map((option) => {
-            const isSelected = value === option;
+          {options.length > 0 ? (
+            options.map((option) => {
+              const isSelected = value === option;
 
-            return (
-              <button
-                key={option}
-                type="button"
-                onClick={() => {
-                  onChange(option);
-                  setIsOpen(false);
-                }}
-                className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm transition ${
-                  isSelected
-                    ? "bg-white/[0.10] text-white"
-                    : "text-gray-300 hover:bg-white/[0.06] hover:text-white"
-                }`}
-              >
-                <span>{option}</span>
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => {
+                    onChange(option);
+                    setIsOpen(false);
+                  }}
+                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm transition ${
+                    isSelected
+                      ? "bg-white/[0.10] text-white"
+                      : "text-gray-300 hover:bg-white/[0.06] hover:text-white"
+                  }`}
+                >
+                  <span>{option}</span>
 
-                {isSelected ? (
-                  <span className="h-1.5 w-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-                ) : (
-                  <span className="h-1.5 w-1.5 rounded-full bg-white/15 transition-all duration-300 hover:bg-white/40" />
-                )}
-              </button>
-            );
-          })}
+                  {isSelected ? (
+                    <span className="h-1.5 w-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                  ) : (
+                    <span className="h-1.5 w-1.5 rounded-full bg-white/15 transition-all duration-300 hover:bg-white/40" />
+                  )}
+                </button>
+              );
+            })
+          ) : (
+            <div className="px-4 py-3 text-sm text-gray-500">
+              Немає доступних варіантів
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -143,8 +172,42 @@ function formatPhone(value: string) {
   return result;
 }
 
-function getTodayValue() {
-  return new Date().toISOString().split("T")[0];
+function toDateValue(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function formatDateLabel(dateValue: string) {
+  const [year, month, day] = dateValue.split("-");
+
+  return `${day}.${month}.${year}`;
+}
+
+function generateDateOptions(daysCount = 30) {
+  const dates: string[] = [];
+
+  for (let index = 0; index < daysCount; index += 1) {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() + index);
+
+    dates.push(formatDateLabel(toDateValue(date)));
+  }
+
+  return dates;
+}
+
+function dateLabelToValue(label: string) {
+  const [day, month, year] = label.split(".");
+
+  if (!day || !month || !year) {
+    return "";
+  }
+
+  return `${year}-${month}-${day}`;
 }
 
 export default function BookingModal({
@@ -155,19 +218,7 @@ export default function BookingModal({
   services,
   masters,
 }: BookingModalProps) {
-  const timeOptions = [
-    "09:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
-  ];
-
-  const today = useMemo(() => getTodayValue(), []);
+  const dateOptions = useMemo(() => generateDateOptions(30), []);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -176,6 +227,9 @@ export default function BookingModal({
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [comment, setComment] = useState("");
+
+  const [availableTimes, setAvailableTimes] = useState(BASE_TIME_OPTIONS);
+  const [isTimesLoading, setIsTimesLoading] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -203,6 +257,7 @@ export default function BookingModal({
       setErrorMessage("");
       setIsSubmitting(false);
       setIsSubmitted(false);
+      setAvailableTimes(BASE_TIME_OPTIONS);
       document.body.style.overflow = "hidden";
     }
 
@@ -226,6 +281,65 @@ export default function BookingModal({
       window.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen, onClose]);
+
+  useEffect(() => {
+    if (!isOpen || !date) {
+      setAvailableTimes(BASE_TIME_OPTIONS);
+      setTime("");
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const loadAvailableTimes = async () => {
+      setIsTimesLoading(true);
+      setErrorMessage("");
+
+      try {
+        const dateValue = dateLabelToValue(date);
+
+        const response = await fetch(
+          `/api/available-times?date=${encodeURIComponent(dateValue)}`,
+          {
+            method: "GET",
+            signal: controller.signal,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to load available times");
+        }
+
+        const data = await response.json();
+        const times = Array.isArray(data.availableTimes)
+          ? data.availableTimes
+          : BASE_TIME_OPTIONS;
+
+        setAvailableTimes(times);
+
+        if (!times.includes(time)) {
+          setTime("");
+        }
+      } catch (error) {
+        if (controller.signal.aborted) return;
+
+        console.error(error);
+        setAvailableTimes([]);
+        setTime("");
+        setErrorMessage("Не вдалося завантажити доступний час.");
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsTimesLoading(false);
+        }
+      }
+    };
+
+    loadAvailableTimes();
+
+    return () => {
+      controller.abort();
+    };
+  }, [isOpen, date]);
 
   if (!isOpen) return null;
 
@@ -252,20 +366,43 @@ export default function BookingModal({
           phone,
           service,
           master,
-          date,
+          date: dateLabelToValue(date),
           time,
           comment,
         }),
       });
 
+      const data = await response.json().catch(() => null);
+
       if (!response.ok) {
-        throw new Error("Failed to submit booking");
+        throw new Error(data?.message || "Failed to submit booking");
       }
 
       setIsSubmitted(true);
     } catch (error) {
       console.error(error);
-      setErrorMessage("Не вдалося відправити заявку. Спробуйте ще раз.");
+
+      if (error instanceof Error && error.message === "TIME_ALREADY_BOOKED") {
+        setErrorMessage(
+          "Цей час вже зайнятий. Будь ласка, оберіть інший час."
+        );
+      } else {
+        setErrorMessage("Не вдалося відправити заявку. Спробуйте ще раз.");
+      }
+
+      const dateValue = dateLabelToValue(date);
+
+      if (dateValue) {
+        const response = await fetch(
+          `/api/available-times?date=${encodeURIComponent(dateValue)}`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setAvailableTimes(data.availableTimes || []);
+          setTime("");
+        }
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -357,26 +494,30 @@ export default function BookingModal({
                 onChange={setMaster}
               />
 
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.18em] text-gray-500">
-                  Дата
-                </p>
-
-                <input
-                  type="date"
-                  value={date}
-                  min={today}
-                  onChange={(event) => setDate(event.target.value)}
-                  className="w-full rounded-2xl border border-white/10 bg-black/60 px-5 py-4 text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-white/[0.03] [color-scheme:dark]"
-                />
-              </div>
+              <LuxurySelect
+                label="Дата"
+                placeholder="Оберіть дату"
+                value={date}
+                options={dateOptions}
+                onChange={(value) => {
+                  setDate(value);
+                  setTime("");
+                }}
+              />
 
               <LuxurySelect
                 label="Час"
-                placeholder="Оберіть час"
+                placeholder={
+                  !date
+                    ? "Спочатку оберіть дату"
+                    : isTimesLoading
+                      ? "Завантаження..."
+                      : "Оберіть час"
+                }
                 value={time}
-                options={timeOptions}
+                options={availableTimes}
                 onChange={setTime}
+                disabled={!date || isTimesLoading}
               />
 
               <div className="md:col-span-2">

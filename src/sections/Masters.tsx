@@ -5,9 +5,16 @@ import type { MasterItem } from "@/app/page";
 type MastersProps = {
   masters: MasterItem[];
   onSelectMaster?: (master: string) => void;
+  onOpenReviews?: (masterId: string) => void;
+  onOpenPortfolio?: (masterId: string) => void;
 };
 
-export default function Masters({ masters, onSelectMaster }: MastersProps) {
+export default function Masters({
+  masters,
+  onSelectMaster,
+  onOpenReviews,
+  onOpenPortfolio,
+}: MastersProps) {
   return (
     <section
       id="masters"
@@ -52,9 +59,8 @@ export default function Masters({ masters, onSelectMaster }: MastersProps) {
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent" />
 
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
+                <div className="absolute bottom-4 left-4 right-4">
                   <span className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs uppercase tracking-[0.18em] text-gray-300 backdrop-blur-xl">
                     {master.role}
                   </span>
@@ -77,13 +83,29 @@ export default function Masters({ masters, onSelectMaster }: MastersProps) {
                   {master.description}
                 </p>
 
-                <div className="mt-6 flex items-center justify-end border-t border-white/10 pt-5">
+                <div className="mt-6 grid gap-3 border-t border-white/10 pt-5">
                   <button
                     type="button"
                     onClick={() => onSelectMaster?.(master.name)}
-                    className="w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-medium text-white transition duration-300 hover:border-white/20 hover:bg-white/[0.10] hover:shadow-[0_0_22px_rgba(255,255,255,0.08)]"
+                    className="w-full rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-black transition duration-300 hover:scale-[1.02]"
                   >
                     Обрати майстра
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onOpenReviews?.(master.id)}
+                    className="w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-white transition hover:border-white/20 hover:bg-white/[0.10]"
+                  >
+                    Прочитати відгуки
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onOpenPortfolio?.(master.id)}
+                    className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-gray-300 transition hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
+                  >
+                    Роботи майстра
                   </button>
                 </div>
               </div>

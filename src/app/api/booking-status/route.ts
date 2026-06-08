@@ -3,35 +3,29 @@ import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
+const ALLOWED_STATUSES = ["new", "confirmed", "cancelled"];
+
 type BookingStatusBody = {
   id?: string;
   status?: string;
 };
 
-const allowedStatuses = ["new", "confirmed", "cancelled"];
+function getString(value: unknown) {
+  return String(value || "").trim();
+}
 
 export async function PATCH(request: Request) {
   try {
     const body = (await request.json()) as BookingStatusBody;
 
-    const id = body.id?.trim();
-    const status = body.status?.trim();
+    const id = getString(body.id);
+    const status = getString(body.status);
 
-    if (!id || !status) {
+    if (!id || !ALLOWED_STATUSES.includes(status)) {
       return NextResponse.json(
         {
           success: false,
-          message: "Missing id or status",
-        },
-        { status: 400 }
-      );
-    }
-
-    if (!allowedStatuses.includes(status)) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Invalid status",
+          message: "Некоректні дані.",
         },
         { status: 400 }
       );
@@ -48,17 +42,15 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Booking status updated",
       booking,
     });
   } catch (error) {
-    console.error("Booking status API error:", error);
+    console.error(error);
 
     return NextResponse.json(
       {
         success: false,
-        message: "Internal server error",
-        error: error instanceof Error ? error.message : String(error),
+        message: "Не вдалося оновити статус.",
       },
       { status: 500 }
     );

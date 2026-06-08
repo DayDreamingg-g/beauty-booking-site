@@ -1,7 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import type { MasterItem, PortfolioItem, ServiceItem } from "@/app/page";
+import { useMemo, useState } from "react";
+import type {
+  MasterItem,
+  PortfolioItem,
+  ReviewItem,
+  ServiceItem,
+} from "@/app/page";
 import Header from "@/components/Header";
 import BookingModal from "@/components/BookingModal";
 import PortfolioLightbox from "@/components/PortfolioLightbox";
@@ -10,28 +15,44 @@ import Contact from "@/sections/Contact";
 import Hero from "@/sections/Hero";
 import Masters from "@/sections/Masters";
 import Portfolio from "@/sections/Portfolio";
+import Reviews from "@/sections/Reviews";
 import Services from "@/sections/Services";
 
 type HomeClientProps = {
   services: ServiceItem[];
   masters: MasterItem[];
   portfolioItems: PortfolioItem[];
+  reviews: ReviewItem[];
 };
 
 export default function HomeClient({
   services,
   masters,
   portfolioItems,
+  reviews,
 }: HomeClientProps) {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
   const [selectedMaster, setSelectedMaster] = useState("");
+
+  const [portfolioMasterFilter, setPortfolioMasterFilter] = useState("all");
+  const [reviewsMasterFilter, setReviewsMasterFilter] = useState("all");
 
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [selectedPortfolioIndex, setSelectedPortfolioIndex] = useState(0);
 
   const serviceNames = services.map((service) => service.title);
   const masterNames = masters.map((master) => master.name);
+
+  const filteredPortfolioItems = useMemo(() => {
+    if (portfolioMasterFilter === "all") {
+      return portfolioItems;
+    }
+
+    return portfolioItems.filter(
+      (item) => item.masterId === portfolioMasterFilter
+    );
+  }, [portfolioItems, portfolioMasterFilter]);
 
   const openBooking = (service = "", master = "") => {
     setSelectedService(service);
@@ -41,6 +62,27 @@ export default function HomeClient({
 
   const closeBooking = () => {
     setIsBookingOpen(false);
+  };
+
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+
+    if (section) {
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
+  const openMasterReviews = (masterId: string) => {
+    setReviewsMasterFilter(masterId);
+    setTimeout(() => scrollToSection("reviews"), 0);
+  };
+
+  const openMasterPortfolio = (masterId: string) => {
+    setPortfolioMasterFilter(masterId);
+    setTimeout(() => scrollToSection("portfolio"), 0);
   };
 
   const openPortfolioImage = (index: number) => {
@@ -54,13 +96,13 @@ export default function HomeClient({
 
   const showPrevPortfolioImage = () => {
     setSelectedPortfolioIndex((prev) =>
-      prev === 0 ? portfolioItems.length - 1 : prev - 1
+      prev === 0 ? filteredPortfolioItems.length - 1 : prev - 1
     );
   };
 
   const showNextPortfolioImage = () => {
     setSelectedPortfolioIndex((prev) =>
-      prev === portfolioItems.length - 1 ? 0 : prev + 1
+      prev === filteredPortfolioItems.length - 1 ? 0 : prev + 1
     );
   };
 
@@ -85,9 +127,24 @@ export default function HomeClient({
         <Masters
           masters={masters}
           onSelectMaster={(master) => openBooking("", master)}
+          onOpenReviews={openMasterReviews}
+          onOpenPortfolio={openMasterPortfolio}
         />
 
-        <Portfolio items={portfolioItems} onOpenImage={openPortfolioImage} />
+        <Portfolio
+          items={filteredPortfolioItems}
+          masters={masters}
+          selectedMasterId={portfolioMasterFilter}
+          onSelectMaster={setPortfolioMasterFilter}
+          onOpenImage={openPortfolioImage}
+        />
+
+        <Reviews
+          masters={masters}
+          initialReviews={reviews}
+          selectedMasterId={reviewsMasterFilter}
+          onSelectMaster={setReviewsMasterFilter}
+        />
 
         <Contact />
       </main>
@@ -104,7 +161,7 @@ export default function HomeClient({
       <PortfolioLightbox
         isOpen={isLightboxOpen}
         onClose={closePortfolioImage}
-        items={portfolioItems}
+        items={filteredPortfolioItems}
         selectedIndex={selectedPortfolioIndex}
         onPrev={showPrevPortfolioImage}
         onNext={showNextPortfolioImage}

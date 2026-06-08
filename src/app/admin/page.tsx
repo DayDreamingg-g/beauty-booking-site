@@ -12,11 +12,19 @@ type AdminPageProps = {
   searchParams?: Promise<{
     status?: string;
     q?: string;
+    reviewMaster?: string;
   }>;
 };
 
 function getString(formData: FormData, key: string) {
   return String(formData.get(key) || "").trim();
+}
+
+function getSelectedIds(formData: FormData) {
+  return formData
+    .getAll("ids")
+    .map((id) => String(id).trim())
+    .filter(Boolean);
 }
 
 function formatPrice(value: string) {
@@ -357,6 +365,59 @@ function FileInput() {
   );
 }
 
+function BulkCheckbox({
+  form,
+  value,
+}: {
+  form: string;
+  value: string;
+}) {
+  return (
+    <div className="mb-4 flex items-center gap-3">
+      <input
+        form={form}
+        type="checkbox"
+        name="ids"
+        value={value}
+        className="h-4 w-4 rounded border-white/20 bg-black accent-white"
+      />
+
+      <span className="text-xs uppercase tracking-[0.18em] text-gray-500">
+        Вибрати
+      </span>
+    </div>
+  );
+}
+
+function BulkDeleteBar({
+  id,
+  action,
+  text,
+  buttonText,
+}: {
+  id: string;
+  action: (formData: FormData) => Promise<void>;
+  text: string;
+  buttonText: string;
+}) {
+  return (
+    <form
+      id={id}
+      action={action}
+      className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4"
+    >
+      <p className="text-sm text-gray-400">{text}</p>
+
+      <button
+        type="submit"
+        className="rounded-full border border-red-400/20 bg-red-400/10 px-4 py-2 text-xs text-red-200 transition hover:bg-red-400/15"
+      >
+        {buttonText}
+      </button>
+    </form>
+  );
+}
+
 async function createService(formData: FormData) {
   "use server";
 
@@ -463,6 +524,25 @@ async function deleteService(formData: FormData) {
   revalidatePath("/");
 }
 
+async function deleteSelectedServices(formData: FormData) {
+  "use server";
+
+  const ids = getSelectedIds(formData);
+
+  if (ids.length === 0) return;
+
+  await prisma.service.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/");
+}
+
 async function createMaster(formData: FormData) {
   "use server";
 
@@ -560,6 +640,25 @@ async function deleteMaster(formData: FormData) {
   await prisma.master.delete({
     where: {
       id,
+    },
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/");
+}
+
+async function deleteSelectedMasters(formData: FormData) {
+  "use server";
+
+  const ids = getSelectedIds(formData);
+
+  if (ids.length === 0) return;
+
+  await prisma.master.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
     },
   });
 
@@ -681,38 +780,107 @@ async function deletePortfolioItem(formData: FormData) {
   revalidatePath("/");
 }
 
+async function deleteSelectedPortfolioItems(formData: FormData) {
+  "use server";
+
+  const ids = getSelectedIds(formData);
+
+  if (ids.length === 0) return;
+
+  await prisma.portfolioItem.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/");
+}
+
+async function deleteReview(formData: FormData) {
+  "use server";
+
+  const id = getString(formData, "id");
+
+  if (!id) return;
+
+  await prisma.review.delete({
+    where: {
+      id,
+    },
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/");
+}
+
+async function deleteSelectedReviews(formData: FormData) {
+  "use server";
+
+  const ids = getSelectedIds(formData);
+
+  if (ids.length === 0) return;
+
+  await prisma.review.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/");
+}
+
 export default async function AdminPage({ searchParams }: AdminPageProps) {
   const params = await searchParams;
 
   const statusFilter = params?.status || "all";
   const searchQuery = (params?.q || "").trim().toLowerCase();
+  const reviewMasterFilter = params?.reviewMaster || "all";
 
-  const [bookings, services, masters, portfolioItems] = await Promise.all([
-    prisma.bookingRequest.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    }),
-    prisma.service.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    }),
-    prisma.master.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    }),
-    prisma.portfolioItem.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-      include: {
-        service: true,
-        master: true,
-      },
-    }),
-  ]);
+  const [bookings, services, masters, portfolioItems, reviews] =
+    await Promise.all([
+      prisma.bookingRequest.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+
+      prisma.service.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+
+      prisma.master.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+
+      prisma.portfolioItem.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          service: true,
+          master: true,
+        },
+      }),
+
+      prisma.review.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          master: true,
+        },
+      }),
+    ]);
 
   const filteredBookings = bookings.filter((booking) => {
     const matchesStatus =
@@ -738,6 +906,14 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     (booking) => booking.status === "cancelled"
   ).length;
 
+  const filteredReviews = reviews.filter((review) => {
+    if (reviewMasterFilter === "all") {
+      return true;
+    }
+
+    return review.masterId === reviewMasterFilter;
+  });
+
   const filters = [
     { value: "all", label: "Усі" },
     { value: "new", label: "Нові" },
@@ -758,8 +934,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </h1>
 
           <p className="mt-5 max-w-2xl text-sm leading-7 text-gray-400 md:text-base">
-            Заявки, послуги, прайс, майстри, портфоліо та зображення в одному
-            місці.
+            Заявки, послуги, прайс, майстри, портфоліо, відгуки та зображення в
+            одному місці.
           </p>
         </div>
 
@@ -805,6 +981,13 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm text-gray-300 transition hover:border-white/20 hover:bg-white/[0.10] hover:text-white"
             >
               Портфоліо
+            </a>
+
+            <a
+              href="#reviews-list"
+              className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm text-gray-300 transition hover:border-white/20 hover:bg-white/[0.10] hover:text-white"
+            >
+              Відгуки
             </a>
           </div>
         </div>
@@ -1193,6 +1376,13 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             <h2 className="text-3xl font-semibold">Редагування послуг</h2>
           </div>
 
+          <BulkDeleteBar
+            id="bulk-delete-services"
+            action={deleteSelectedServices}
+            text="Виберіть послуги для масового видалення"
+            buttonText="Видалити вибрані послуги"
+          />
+
           <div className="grid gap-4">
             {services.length === 0 ? (
               <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 text-center text-sm text-gray-400">
@@ -1204,6 +1394,11 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                   key={service.id}
                   className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 md:p-6"
                 >
+                  <BulkCheckbox
+                    form="bulk-delete-services"
+                    value={service.id}
+                  />
+
                   <form action={updateService} className="grid gap-4">
                     <input type="hidden" name="id" value={service.id} />
 
@@ -1289,6 +1484,13 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             <h2 className="text-3xl font-semibold">Редагування майстрів</h2>
           </div>
 
+          <BulkDeleteBar
+            id="bulk-delete-masters"
+            action={deleteSelectedMasters}
+            text="Виберіть майстрів для масового видалення"
+            buttonText="Видалити вибраних майстрів"
+          />
+
           <div className="grid gap-4">
             {masters.length === 0 ? (
               <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 text-center text-sm text-gray-400">
@@ -1300,6 +1502,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                   key={master.id}
                   className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 md:p-6"
                 >
+                  <BulkCheckbox form="bulk-delete-masters" value={master.id} />
+
                   <form action={updateMaster} className="grid gap-4">
                     <input type="hidden" name="id" value={master.id} />
 
@@ -1383,7 +1587,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </div>
         </section>
 
-        <section id="portfolio-list" className="scroll-mt-24">
+        <section id="portfolio-list" className="mb-12 scroll-mt-24">
           <div className="mb-5">
             <p className="mb-2 text-xs uppercase tracking-[0.24em] text-gray-500">
               Portfolio
@@ -1391,6 +1595,13 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
             <h2 className="text-3xl font-semibold">Редагування портфоліо</h2>
           </div>
+
+          <BulkDeleteBar
+            id="bulk-delete-portfolio"
+            action={deleteSelectedPortfolioItems}
+            text="Виберіть роботи для масового видалення"
+            buttonText="Видалити вибрані роботи"
+          />
 
           <div className="grid gap-4">
             {portfolioItems.length === 0 ? (
@@ -1403,6 +1614,11 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                   key={item.id}
                   className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 md:p-6"
                 >
+                  <BulkCheckbox
+                    form="bulk-delete-portfolio"
+                    value={item.id}
+                  />
+
                   <form action={updatePortfolioItem} className="grid gap-4">
                     <input type="hidden" name="id" value={item.id} />
 
@@ -1512,6 +1728,127 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                       </div>
                     </div>
                   </form>
+                </article>
+              ))
+            )}
+          </div>
+        </section>
+
+        <section id="reviews-list" className="scroll-mt-24">
+          <div className="mb-5">
+            <p className="mb-2 text-xs uppercase tracking-[0.24em] text-gray-500">
+              Reviews
+            </p>
+
+            <h2 className="text-3xl font-semibold">Відгуки</h2>
+
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-gray-500">
+              Тут можна переглядати всі відгуки, фільтрувати їх за майстрами та
+              видаляти непотрібні.
+            </p>
+          </div>
+
+          <div className="mb-6 rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 md:p-6">
+            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-gray-500">
+              Фільтр за майстром
+            </p>
+
+            <div className="flex flex-wrap gap-2">
+              <a
+                href="/admin?reviewMaster=all#reviews-list"
+                className={`rounded-full border px-4 py-2 text-sm transition ${
+                  reviewMasterFilter === "all"
+                    ? "border-white/30 bg-white text-black"
+                    : "border-white/10 bg-white/[0.04] text-gray-300 hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
+                }`}
+              >
+                Усі відгуки
+              </a>
+
+              {masters.map((master) => (
+                <a
+                  key={master.id}
+                  href={`/admin?reviewMaster=${master.id}#reviews-list`}
+                  className={`rounded-full border px-4 py-2 text-sm transition ${
+                    reviewMasterFilter === master.id
+                      ? "border-white/30 bg-white text-black"
+                      : "border-white/10 bg-white/[0.04] text-gray-300 hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
+                  }`}
+                >
+                  {master.name}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <BulkDeleteBar
+            id="bulk-delete-reviews"
+            action={deleteSelectedReviews}
+            text="Виберіть відгуки для масового видалення"
+            buttonText="Видалити вибрані відгуки"
+          />
+
+          <div className="grid gap-4">
+            {filteredReviews.length === 0 ? (
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 text-center text-sm text-gray-400">
+                Відгуків по цьому фільтру поки немає.
+              </div>
+            ) : (
+              filteredReviews.map((review) => (
+                <article
+                  key={review.id}
+                  className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 md:p-6"
+                >
+                  <BulkCheckbox form="bulk-delete-reviews" value={review.id} />
+
+                  <div className="grid gap-5 md:grid-cols-[160px_1fr_auto] md:items-start">
+                    {review.image ? (
+                      <div className="h-40 overflow-hidden rounded-2xl border border-white/10 bg-black/40">
+                        <img
+                          src={review.image}
+                          alt={review.name}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex h-40 items-center justify-center rounded-2xl border border-white/10 bg-black/40 text-xs text-gray-500">
+                        Без фото
+                      </div>
+                    )}
+
+                    <div>
+                      <div className="mb-3 flex flex-wrap items-center gap-3">
+                        <h3 className="text-xl font-semibold">{review.name}</h3>
+
+                        <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-gray-300">
+                          {review.master.name}
+                        </span>
+
+                        <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-gray-300">
+                          {review.rating}/5 ★
+                        </span>
+
+                        <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-gray-400">
+                          {formatCreatedAt(review.createdAt)}
+                        </span>
+                      </div>
+
+                      <p className="text-sm leading-7 text-gray-300">
+                        {review.text}
+                      </p>
+                    </div>
+
+                    <form action={deleteReview}>
+                      <input type="hidden" name="id" value={review.id} />
+
+                      <button
+                        type="submit"
+                        className="rounded-full border border-red-400/20 bg-red-400/10 px-4 py-2 text-xs text-red-200 transition hover:bg-red-400/15"
+                      >
+                        Видалити
+                      </button>
+                    </form>
+                  </div>
                 </article>
               ))
             )}

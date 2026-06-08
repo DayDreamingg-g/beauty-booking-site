@@ -1,191 +1,154 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 
 type HeaderProps = {
   onOpenBooking: () => void;
 };
 
+const navItems = [
+  {
+    href: "#services",
+    label: "Послуги",
+  },
+  {
+    href: "#masters",
+    label: "Майстри",
+  },
+  {
+    href: "#portfolio",
+    label: "Портфоліо",
+  },
+  {
+    href: "#reviews",
+    label: "Відгуки",
+  },
+  {
+    href: "#contact",
+    label: "Контакти",
+  },
+];
+
 export default function Header({ onOpenBooking }: HeaderProps) {
-  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const bookingClickCountRef = useRef(0);
+  const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [logoClickCount, setLogoClickCount] = useState(0);
-
-  useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isMenuOpen]);
-
-  useEffect(() => {
-    if (logoClickCount === 0) return;
-
-    const resetTimer = setTimeout(() => {
-      setLogoClickCount(0);
-    }, 1800);
-
-    return () => {
-      clearTimeout(resetTimer);
-    };
-  }, [logoClickCount]);
-
-  const closeMenu = () => setIsMenuOpen(false);
-
-  const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-
-    const nextCount = logoClickCount + 1;
-
-    if (nextCount >= 5) {
-      setLogoClickCount(0);
-      router.push("/admin");
-      return;
-    }
-
-    setLogoClickCount(nextCount);
-
-    if (window.location.hash !== "#top") {
-      window.location.hash = "top";
-      return;
-    }
-
-    document.getElementById("top")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+  const closeMenu = () => {
+    setIsOpen(false);
   };
 
-  const navItems = [
-    {
-      href: "#services",
-      label: "Послуги",
-    },
-    {
-      href: "#masters",
-      label: "Майстри",
-    },
-    {
-      href: "#portfolio",
-      label: "Портфоліо",
-    },
-    {
-      href: "#contact",
-      label: "Контакти",
-    },
-  ];
+  const handleSecretAdminClick = () => {
+    bookingClickCountRef.current += 1;
+
+    if (clickTimerRef.current) {
+      clearTimeout(clickTimerRef.current);
+    }
+
+    clickTimerRef.current = setTimeout(() => {
+      bookingClickCountRef.current = 0;
+    }, 1500);
+
+    if (bookingClickCountRef.current >= 5) {
+      bookingClickCountRef.current = 0;
+
+      if (clickTimerRef.current) {
+        clearTimeout(clickTimerRef.current);
+      }
+
+      window.location.href = "/admin";
+    }
+  };
 
   return (
-    <>
-      <header className="fixed left-0 top-0 z-50 w-full border-b border-white/10 bg-black/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 text-white sm:px-5 md:px-6 md:py-4">
-          <a
-            href="#top"
-            onClick={handleLogoClick}
-            className="min-w-0 truncate text-base font-bold tracking-tight transition hover:text-gray-300 sm:text-lg md:text-xl"
-            title="Beauty Booking"
+    <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-black/55 backdrop-blur-2xl">
+      <div className="mx-auto flex h-20 w-full max-w-6xl items-center justify-between px-4 text-white sm:px-5 md:px-6">
+        <a
+          href="#top"
+          onClick={closeMenu}
+          className="text-sm font-semibold uppercase tracking-[0.24em] text-white"
+        >
+          Beauty{" "}
+          <span
+            role="button"
+            tabIndex={0}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              handleSecretAdminClick();
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                handleSecretAdminClick();
+              }
+            }}
+            className="cursor-pointer select-none"
           >
-            Beauty Booking
-          </a>
+            Booking
+          </span>
+        </a>
 
-          <nav className="hidden items-center gap-6 text-sm text-gray-300 md:flex">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="transition hover:text-white"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-            <button
-              type="button"
-              onClick={() => setIsMenuOpen(true)}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-lg text-white transition hover:bg-white/[0.10] md:hidden"
-              aria-label="Відкрити меню"
+        <nav className="hidden items-center gap-2 md:flex">
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-gray-300 transition hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
             >
-              ☰
-            </button>
+              {item.label}
+            </a>
+          ))}
+        </nav>
 
-            <button
-              type="button"
-              onClick={onOpenBooking}
-              className="rounded-xl bg-white px-3 py-2 text-xs font-semibold text-black transition hover:scale-[1.02] sm:px-4 sm:text-sm md:rounded-2xl md:border md:border-white/15 md:bg-white/5 md:text-white md:hover:bg-white/10"
-            >
-              Запис
-            </button>
-          </div>
+        <div className="hidden items-center gap-3 md:flex">
+          <button
+            type="button"
+            onClick={onOpenBooking}
+            className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black transition hover:scale-[1.02]"
+          >
+            Записатися
+          </button>
         </div>
-      </header>
+
+        <button
+          type="button"
+          onClick={() => setIsOpen((prev) => !prev)}
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white md:hidden"
+        >
+          {isOpen ? "×" : "☰"}
+        </button>
+      </div>
 
       <div
-        className={`fixed inset-0 z-[60] bg-black/70 backdrop-blur-xl transition duration-300 ${
-          isMenuOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        className={`overflow-hidden border-t border-white/10 bg-black/90 backdrop-blur-2xl transition-all duration-300 md:hidden ${
+          isOpen ? "max-h-[420px] opacity-100" : "max-h-0 opacity-0"
         }`}
-        onClick={closeMenu}
       >
-        <div
-          className={`absolute right-0 top-0 flex h-full w-[86%] max-w-sm transform flex-col border-l border-white/10 bg-[#0b0b0b]/95 p-5 text-white shadow-[0_0_80px_rgba(0,0,0,0.55)] transition duration-300 sm:w-[80%] sm:p-6 ${
-            isMenuOpen ? "translate-x-0" : "translate-x-full"
-          }`}
-          onClick={(event) => event.stopPropagation()}
-        >
-          <div className="mb-8 flex items-center justify-between gap-4">
-            <div>
-              <p className="text-xs uppercase tracking-[0.28em] text-gray-500">
-                Menu
-              </p>
-
-              <p className="mt-2 text-lg font-semibold">Beauty Booking</p>
-            </div>
-
-            <button
-              type="button"
+        <div className="grid gap-2 px-4 py-4">
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
               onClick={closeMenu}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xl text-white/70 transition hover:bg-white/10 hover:text-white"
-              aria-label="Закрити меню"
+              className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-gray-300"
             >
-              ×
-            </button>
-          </div>
+              {item.label}
+            </a>
+          ))}
 
-          <nav className="flex flex-col gap-3 text-base">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={closeMenu}
-                className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 text-white transition hover:border-white/20 hover:bg-white/[0.08]"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="mt-auto pt-8">
-            <button
-              type="button"
-              onClick={() => {
-                closeMenu();
-                onOpenBooking();
-              }}
-              className="w-full rounded-2xl bg-white px-5 py-4 font-semibold text-black transition hover:scale-[1.02]"
-            >
-              Записатися
-            </button>
-
-            <p className="mt-4 text-center text-xs leading-5 text-gray-500">
-              Оберіть послугу, майстра та зручний час запису.
-            </p>
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              closeMenu();
+              onOpenBooking();
+            }}
+            className="rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-black"
+          >
+            Записатися
+          </button>
         </div>
       </div>
-    </>
+    </header>
   );
 }
