@@ -1,46 +1,551 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ffffff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
+  min-height: 100vh;
+  overflow-x: hidden;
   background: var(--background);
   color: var(--foreground);
+}
+
+body,
+button,
+input,
+textarea,
+select {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+  touch-action: manipulation;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+section {
+  scroll-margin-top: 96px;
+}
+
+input,
+textarea,
+select,
+button {
+  font-size: 16px;
+}
+
+input,
+textarea,
+select {
+  color: white;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(1);
+  opacity: 1;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.overflow-x-auto {
+  scrollbar-width: none;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  display: none;
+}
+
 @keyframes modalIn {
-  0% {
+  from {
     opacity: 0;
-    transform: scale(0.96) translateY(12px);
+    transform: translateY(16px) scale(0.98);
   }
 
-  100% {
+  to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-.site-shell section {
-  background-color: transparent !important;
+/* ========================= */
+/* MOBILE UI POLISH */
+/* ========================= */
+
+@media (max-width: 768px) {
+  body {
+    background: #000;
+  }
+
+  main {
+    overflow-x: hidden;
+  }
+
+  section {
+    min-height: auto !important;
+    padding-top: 72px !important;
+    padding-bottom: 72px !important;
+  }
+
+  h1 {
+    font-size: clamp(2.45rem, 12vw, 4rem) !important;
+    line-height: 0.95 !important;
+    letter-spacing: -0.04em !important;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 9vw, 3rem) !important;
+    line-height: 1.05 !important;
+    letter-spacing: -0.03em !important;
+  }
+
+  h3 {
+    line-height: 1.15 !important;
+  }
+
+  p {
+    word-break: normal;
+  }
+
+  .max-w-6xl,
+  .max-w-7xl {
+    width: 100%;
+  }
+
+  .rounded-\[2rem\] {
+    border-radius: 1.45rem !important;
+  }
+
+  .rounded-\[1\.75rem\] {
+    border-radius: 1.35rem !important;
+  }
+
+  .rounded-\[1\.5rem\] {
+    border-radius: 1.2rem !important;
+  }
+
+  form {
+    width: 100%;
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+  }
+
+  textarea {
+    min-height: 110px;
+  }
+
+  button {
+    min-height: 42px;
+  }
+
+  /* HEADER */
+  header {
+    background: rgba(0, 0, 0, 0.78) !important;
+  }
+
+  header .h-20 {
+    height: 72px !important;
+  }
+
+  header a[href="#top"] {
+    max-width: 170px;
+    font-size: 12px !important;
+    line-height: 1.2;
+    letter-spacing: 0.18em !important;
+  }
+
+  header nav {
+    display: none !important;
+  }
+
+  /* HERO */
+  #top {
+    padding-top: 110px !important;
+  }
+
+  #top .grid {
+    gap: 2rem !important;
+  }
+
+  #top p {
+    max-width: 100% !important;
+  }
+
+  #top .aspect-\[4\/5\] {
+    aspect-ratio: 4 / 4.7 !important;
+  }
+
+  #top img {
+    object-position: center;
+  }
+
+  #top button,
+  #top a {
+    width: 100% !important;
+    text-align: center;
+  }
+
+  /* SECTIONS */
+  #services,
+  #masters,
+  #portfolio,
+  #reviews,
+  #contact {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  #services .grid,
+  #masters .grid,
+  #portfolio .grid {
+    gap: 1rem !important;
+  }
+
+  #masters img,
+  #portfolio img {
+    object-position: center;
+  }
+
+  #portfolio button.aspect-\[4\/5\] {
+    aspect-ratio: 4 / 4.7 !important;
+  }
+
+  /* REVIEWS */
+  #reviews .lg\:grid-cols-\[420px_1fr\] {
+    grid-template-columns: 1fr !important;
+  }
+
+  #reviews form {
+    order: 1;
+  }
+
+  #reviews form + div {
+    order: 2;
+  }
+
+  #reviews .h-64 {
+    height: 220px !important;
+  }
+
+  #reviews .h-48 {
+    height: 180px !important;
+  }
+
+  #reviews .flex.gap-2 {
+    flex-wrap: wrap;
+  }
+
+  #reviews .flex.h-11.w-11 {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  #reviews .rounded-\[1\.5rem\].p-4,
+  #reviews .rounded-\[1\.5rem\].md\:p-5 {
+    padding: 1rem !important;
+  }
+
+  /* BOOKING MODAL */
+  .fixed.inset-0.z-\[100\] {
+    align-items: flex-start !important;
+    padding-top: 80px !important;
+    padding-bottom: 24px !important;
+  }
+
+  .fixed.inset-0.z-\[100\] > div {
+    max-height: calc(100vh - 104px) !important;
+    width: 100% !important;
+    padding: 1.25rem !important;
+    border-radius: 1.45rem !important;
+  }
+
+  .fixed.inset-0.z-\[100\] form {
+    grid-template-columns: 1fr !important;
+  }
+
+  .fixed.inset-0.z-\[100\] .md\:col-span-2 {
+    grid-column: span 1 / span 1 !important;
+  }
+
+  .fixed.inset-0.z-\[100\] input,
+  .fixed.inset-0.z-\[100\] textarea,
+  .fixed.inset-0.z-\[100\] button {
+    font-size: 16px !important;
+  }
+
+  /* LIGHTBOX */
+  .fixed.inset-0 img {
+    max-height: 70vh;
+    object-fit: contain;
+  }
+
+  /* ADMIN */
+  main.bg-black {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  main.bg-black h1 {
+    font-size: clamp(2.2rem, 12vw, 3.5rem) !important;
+  }
+
+  main.bg-black .sticky {
+    top: 0 !important;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  main.bg-black .sticky .flex {
+    gap: 0.5rem !important;
+  }
+
+  main.bg-black .sticky a {
+    white-space: nowrap;
+    padding: 0.65rem 0.9rem !important;
+    font-size: 13px !important;
+  }
+
+  main.bg-black section {
+    scroll-margin-top: 90px;
+  }
+
+  main.bg-black .xl\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  main.bg-black .lg\:grid-cols-\[1fr_220px_260px\],
+  main.bg-black .lg\:grid-cols-\[1fr_1fr\],
+  main.bg-black .lg\:grid-cols-3,
+  main.bg-black .lg\:grid-cols-\[1fr_auto\],
+  main.bg-black .md\:grid-cols-\[160px_1fr_auto\] {
+    grid-template-columns: 1fr !important;
+  }
+
+  main.bg-black .md\:grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  main.bg-black .sm\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  main.bg-black article {
+    padding: 1rem !important;
+  }
+
+  main.bg-black article form {
+    width: 100%;
+  }
+
+  main.bg-black .h-24.w-24 {
+    width: 88px !important;
+    height: 88px !important;
+  }
+
+  main.bg-black .h-40 {
+    height: 180px !important;
+  }
+
+  main.bg-black .flex-wrap {
+    gap: 0.5rem !important;
+  }
+
+  main.bg-black button,
+  main.bg-black a {
+    white-space: nowrap;
+  }
+
+  main.bg-black input[type="file"] {
+    font-size: 13px;
+  }
+
+  main.bg-black input[type="file"]::file-selector-button {
+    margin-right: 0.75rem;
+  }
+
+  form[id^="bulk-delete"] {
+    align-items: stretch !important;
+  }
+
+  form[id^="bulk-delete"] p {
+    width: 100%;
+    font-size: 13px;
+  }
+
+  form[id^="bulk-delete"] button {
+    width: 100%;
+  }
 }
 
-.site-shell section::before {
-  pointer-events: none;
+/* ========================= */
+/* SMALL PHONES */
+/* ========================= */
+
+@media (max-width: 480px) {
+  section {
+    padding-top: 64px !important;
+    padding-bottom: 64px !important;
+  }
+
+  h1 {
+    font-size: clamp(2.25rem, 13vw, 3.25rem) !important;
+  }
+
+  h2 {
+    font-size: clamp(1.85rem, 10vw, 2.6rem) !important;
+  }
+
+  .px-6,
+  .p-6 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .py-4 {
+    padding-top: 0.9rem !important;
+    padding-bottom: 0.9rem !important;
+  }
+
+  input,
+  textarea,
+  select {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* HEADER */
+  header .h-20 {
+    height: 68px !important;
+  }
+
+  header a[href="#top"] {
+    font-size: 11px !important;
+    max-width: 150px;
+  }
+
+  /* HERO */
+  #top {
+    padding-top: 100px !important;
+  }
+
+  #top .aspect-\[4\/5\] {
+    aspect-ratio: 1 / 1.1 !important;
+  }
+
+  /* CARDS */
+  .rounded-\[2rem\],
+  .rounded-\[1\.75rem\],
+  .rounded-\[1\.5rem\] {
+    border-radius: 1.15rem !important;
+  }
+
+  /* REVIEWS */
+  #reviews .flex.h-11.w-11 {
+    width: 39px !important;
+    height: 39px !important;
+    font-size: 15px !important;
+  }
+
+  #reviews .h-64 {
+    height: 190px !important;
+  }
+
+  #reviews .h-48 {
+    height: 160px !important;
+  }
+
+  #reviews .rounded-full.px-4 {
+    padding-left: 0.85rem !important;
+    padding-right: 0.85rem !important;
+    font-size: 13px !important;
+  }
+
+  /* ADMIN */
+  main.bg-black {
+    padding-top: 1.25rem !important;
+  }
+
+  main.bg-black .md\:grid-cols-4 {
+    grid-template-columns: 1fr !important;
+  }
+
+  main.bg-black .rounded-\[2rem\] {
+    border-radius: 1.15rem !important;
+  }
+
+  main.bg-black article {
+    padding: 0.9rem !important;
+  }
+
+  main.bg-black .h-24.w-24 {
+    width: 76px !important;
+    height: 76px !important;
+  }
+
+  main.bg-black .h-40 {
+    height: 150px !important;
+  }
+
+  main.bg-black .sticky a {
+    padding: 0.6rem 0.8rem !important;
+    font-size: 12px !important;
+  }
+
+  main.bg-black input,
+  main.bg-black textarea,
+  main.bg-black select {
+    font-size: 16px !important;
+  }
+
+  main.bg-black button {
+    width: 100%;
+  }
+
+  main.bg-black .flex-wrap button,
+  main.bg-black .flex-wrap a {
+    width: auto;
+  }
+
+  main.bg-black form[id^="bulk-delete"] button {
+    width: 100%;
+  }
 }
