@@ -89,6 +89,18 @@ input[type="number"]::-webkit-outer-spin-button {
   display: none;
 }
 
+.bulk-checkbox {
+  position: relative;
+  display: inline-block;
+}
+
+.bulk-checkbox:checked {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.5 8.2L6.6 11.3L12.8 4.7' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 14px 14px;
+}
+
 @keyframes modalIn {
   from {
     opacity: 0;
@@ -175,7 +187,6 @@ input[type="number"]::-webkit-outer-spin-button {
     min-height: 42px;
   }
 
-  /* HEADER */
   header {
     background: rgba(0, 0, 0, 0.78) !important;
   }
@@ -195,7 +206,6 @@ input[type="number"]::-webkit-outer-spin-button {
     display: none !important;
   }
 
-  /* HERO */
   #top {
     padding-top: 110px !important;
   }
@@ -222,7 +232,6 @@ input[type="number"]::-webkit-outer-spin-button {
     text-align: center;
   }
 
-  /* SECTIONS */
   #services,
   #masters,
   #portfolio,
@@ -247,7 +256,6 @@ input[type="number"]::-webkit-outer-spin-button {
     aspect-ratio: 4 / 4.7 !important;
   }
 
-  /* REVIEWS */
   #reviews .lg\:grid-cols-\[420px_1fr\] {
     grid-template-columns: 1fr !important;
   }
@@ -277,12 +285,6 @@ input[type="number"]::-webkit-outer-spin-button {
     height: 42px !important;
   }
 
-  #reviews .rounded-\[1\.5rem\].p-4,
-  #reviews .rounded-\[1\.5rem\].md\:p-5 {
-    padding: 1rem !important;
-  }
-
-  /* BOOKING MODAL */
   .fixed.inset-0.z-\[100\] {
     align-items: flex-start !important;
     padding-top: 80px !important;
@@ -310,13 +312,11 @@ input[type="number"]::-webkit-outer-spin-button {
     font-size: 16px !important;
   }
 
-  /* LIGHTBOX */
   .fixed.inset-0 img {
     max-height: 70vh;
     object-fit: contain;
   }
 
-  /* ADMIN */
   main.bg-black {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
@@ -326,22 +326,25 @@ input[type="number"]::-webkit-outer-spin-button {
     font-size: clamp(2.2rem, 12vw, 3.5rem) !important;
   }
 
-  main.bg-black .sticky {
-    top: 0 !important;
-    margin-left: -1rem;
-    margin-right: -1rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
+  main.bg-black .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
   }
 
-  main.bg-black .sticky .flex {
-    gap: 0.5rem !important;
+  main.bg-black .mb-8.overflow-x-auto.rounded-\[1\.5rem\] {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0.75rem !important;
   }
 
-  main.bg-black .sticky a {
+  main.bg-black .mb-8.overflow-x-auto.rounded-\[1\.5rem\] .flex {
+    width: max-content;
+    min-width: max-content;
+  }
+
+  main.bg-black .mb-8.overflow-x-auto.rounded-\[1\.5rem\] a {
+    width: auto !important;
+    min-height: 40px !important;
     white-space: nowrap;
-    padding: 0.65rem 0.9rem !important;
-    font-size: 13px !important;
   }
 
   main.bg-black section {
@@ -414,6 +417,21 @@ input[type="number"]::-webkit-outer-spin-button {
   form[id^="bulk-delete"] button {
     width: 100%;
   }
+
+  main.bg-black label:has(.bulk-checkbox) {
+    width: fit-content !important;
+    min-height: 42px !important;
+  }
+
+  main.bg-black label:has(.bulk-checkbox) span {
+    white-space: nowrap;
+  }
+
+  main.bg-black .bulk-checkbox {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+  }
 }
 
 /* ========================= */
@@ -452,7 +470,6 @@ input[type="number"]::-webkit-outer-spin-button {
     padding-right: 1rem !important;
   }
 
-  /* HEADER */
   header .h-20 {
     height: 68px !important;
   }
@@ -462,7 +479,6 @@ input[type="number"]::-webkit-outer-spin-button {
     max-width: 150px;
   }
 
-  /* HERO */
   #top {
     padding-top: 100px !important;
   }
@@ -471,14 +487,12 @@ input[type="number"]::-webkit-outer-spin-button {
     aspect-ratio: 1 / 1.1 !important;
   }
 
-  /* CARDS */
   .rounded-\[2rem\],
   .rounded-\[1\.75rem\],
   .rounded-\[1\.5rem\] {
     border-radius: 1.15rem !important;
   }
 
-  /* REVIEWS */
   #reviews .flex.h-11.w-11 {
     width: 39px !important;
     height: 39px !important;
@@ -499,7 +513,6 @@ input[type="number"]::-webkit-outer-spin-button {
     font-size: 13px !important;
   }
 
-  /* ADMIN */
   main.bg-black {
     padding-top: 1.25rem !important;
   }
@@ -525,11 +538,6 @@ input[type="number"]::-webkit-outer-spin-button {
     height: 150px !important;
   }
 
-  main.bg-black .sticky a {
-    padding: 0.6rem 0.8rem !important;
-    font-size: 12px !important;
-  }
-
   main.bg-black input,
   main.bg-black textarea,
   main.bg-black select {
@@ -547,5 +555,14 @@ input[type="number"]::-webkit-outer-spin-button {
 
   main.bg-black form[id^="bulk-delete"] button {
     width: 100%;
+  }
+
+  main.bg-black label:has(.bulk-checkbox) {
+    width: fit-content !important;
+  }
+
+  main.bg-black .bulk-checkbox {
+    width: 20px !important;
+    height: 20px !important;
   }
 }

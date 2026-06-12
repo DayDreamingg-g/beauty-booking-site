@@ -365,27 +365,21 @@ function FileInput() {
   );
 }
 
-function BulkCheckbox({
-  form,
-  value,
-}: {
-  form: string;
-  value: string;
-}) {
+function BulkCheckbox({ form, value }: { form: string; value: string }) {
   return (
-    <div className="mb-4 flex items-center gap-3">
+    <label className="mb-5 inline-flex w-fit cursor-pointer items-center gap-3 rounded-full border border-white/10 bg-black/35 px-4 py-2 transition hover:border-white/20 hover:bg-white/[0.06]">
       <input
         form={form}
         type="checkbox"
         name="ids"
         value={value}
-        className="h-4 w-4 rounded border-white/20 bg-black accent-white"
+        className="bulk-checkbox h-5 w-5 shrink-0 cursor-pointer appearance-none rounded-md border border-white/30 bg-black checked:border-white checked:bg-white"
       />
 
-      <span className="text-xs uppercase tracking-[0.18em] text-gray-500">
+      <span className="select-none text-xs uppercase tracking-[0.18em] text-gray-400">
         Вибрати
       </span>
-    </div>
+    </label>
   );
 }
 
@@ -431,9 +425,7 @@ async function createService(formData: FormData) {
   const price = formatPrice(priceValue);
   const duration = formatDuration(durationHours, durationMinutes);
 
-  if (!title || !price || !duration || !description || !includes) {
-    return;
-  }
+  if (!title || !price || !duration || !description || !includes) return;
 
   await prisma.service.create({
     data: {
@@ -465,14 +457,10 @@ async function updateService(formData: FormData) {
   const price = formatPrice(priceValue);
   const duration = formatDuration(durationHours, durationMinutes);
 
-  if (!id || !title || !price || !duration || !description || !includes) {
-    return;
-  }
+  if (!id || !title || !price || !duration || !description || !includes) return;
 
   await prisma.service.update({
-    where: {
-      id,
-    },
+    where: { id },
     data: {
       title,
       price,
@@ -495,12 +483,8 @@ async function toggleService(formData: FormData) {
   if (!id) return;
 
   await prisma.service.update({
-    where: {
-      id,
-    },
-    data: {
-      isActive: !isActive,
-    },
+    where: { id },
+    data: { isActive: !isActive },
   });
 
   revalidatePath("/admin");
@@ -515,9 +499,7 @@ async function deleteService(formData: FormData) {
   if (!id) return;
 
   await prisma.service.delete({
-    where: {
-      id,
-    },
+    where: { id },
   });
 
   revalidatePath("/admin");
@@ -550,9 +532,7 @@ async function createMaster(formData: FormData) {
   const role = getString(formData, "role");
   const description = getString(formData, "description");
 
-  if (!name || !role || !description) {
-    return;
-  }
+  if (!name || !role || !description) return;
 
   const image = await saveUploadedFile(
     formData,
@@ -583,9 +563,7 @@ async function updateMaster(formData: FormData) {
   const currentImage = getString(formData, "currentImage");
   const description = getString(formData, "description");
 
-  if (!id || !name || !role || !description) {
-    return;
-  }
+  if (!id || !name || !role || !description) return;
 
   const image = await saveUploadedFile(
     formData,
@@ -594,9 +572,7 @@ async function updateMaster(formData: FormData) {
   );
 
   await prisma.master.update({
-    where: {
-      id,
-    },
+    where: { id },
     data: {
       name,
       role,
@@ -618,12 +594,8 @@ async function toggleMaster(formData: FormData) {
   if (!id) return;
 
   await prisma.master.update({
-    where: {
-      id,
-    },
-    data: {
-      isActive: !isActive,
-    },
+    where: { id },
+    data: { isActive: !isActive },
   });
 
   revalidatePath("/admin");
@@ -638,9 +610,7 @@ async function deleteMaster(formData: FormData) {
   if (!id) return;
 
   await prisma.master.delete({
-    where: {
-      id,
-    },
+    where: { id },
   });
 
   revalidatePath("/admin");
@@ -677,9 +647,7 @@ async function createPortfolioItem(formData: FormData) {
 
   const duration = formatDuration(durationHours, durationMinutes);
 
-  if (!serviceId || !masterId || !duration || !description) {
-    return;
-  }
+  if (!serviceId || !masterId || !duration || !description) return;
 
   const image = await saveUploadedFile(
     formData,
@@ -715,9 +683,7 @@ async function updatePortfolioItem(formData: FormData) {
 
   const duration = formatDuration(durationHours, durationMinutes);
 
-  if (!id || !serviceId || !masterId || !duration || !description) {
-    return;
-  }
+  if (!id || !serviceId || !masterId || !duration || !description) return;
 
   const image = await saveUploadedFile(
     formData,
@@ -726,9 +692,7 @@ async function updatePortfolioItem(formData: FormData) {
   );
 
   await prisma.portfolioItem.update({
-    where: {
-      id,
-    },
+    where: { id },
     data: {
       image,
       serviceId,
@@ -751,12 +715,8 @@ async function togglePortfolioItem(formData: FormData) {
   if (!id) return;
 
   await prisma.portfolioItem.update({
-    where: {
-      id,
-    },
-    data: {
-      isActive: !isActive,
-    },
+    where: { id },
+    data: { isActive: !isActive },
   });
 
   revalidatePath("/admin");
@@ -771,9 +731,7 @@ async function deletePortfolioItem(formData: FormData) {
   if (!id) return;
 
   await prisma.portfolioItem.delete({
-    where: {
-      id,
-    },
+    where: { id },
   });
 
   revalidatePath("/admin");
@@ -807,9 +765,7 @@ async function deleteReview(formData: FormData) {
   if (!id) return;
 
   await prisma.review.delete({
-    where: {
-      id,
-    },
+    where: { id },
   });
 
   revalidatePath("/admin");
@@ -939,7 +895,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </p>
         </div>
 
-        <div className="sticky top-0 z-40 mb-8 overflow-x-auto border-y border-white/10 bg-black/85 py-3 backdrop-blur-xl">
+        <div className="mb-8 overflow-x-auto rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-3 backdrop-blur-xl">
           <div className="flex min-w-max gap-2">
             <a
               href="/"
@@ -1146,14 +1102,12 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         </section>
 
         <section id="bookings" className="mb-12 scroll-mt-24">
-          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="mb-2 text-xs uppercase tracking-[0.24em] text-gray-500">
-                Bookings
-              </p>
+          <div className="mb-5">
+            <p className="mb-2 text-xs uppercase tracking-[0.24em] text-gray-500">
+              Bookings
+            </p>
 
-              <h2 className="text-3xl font-semibold">Заявки</h2>
-            </div>
+            <h2 className="text-3xl font-semibold">Заявки</h2>
           </div>
 
           <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-4">

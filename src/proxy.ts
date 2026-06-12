@@ -2,33 +2,44 @@ import { NextRequest, NextResponse } from "next/server";
 
 const ADMIN_USERNAME = "admin";
 
+function unauthorized(message = "Authentication required") {
+  return new NextResponse(message, {
+    status: 401,
+    headers: {
+      "WWW-Authenticate": 'Basic realm="Admin Area"',
+    },
+  });
+}
+
 export function proxy(request: NextRequest) {
-  const adminPassword = process.env.ADMIN_PASSWORD || "12345";
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (!adminPassword) {
+    console.error("ADMIN_PASSWORD is not set");
+    return unauthorized("ADMIN_PASSWORD is not set");
+  }
 
   const authHeader = request.headers.get("authorization");
 
-  if (!authHeader) {
-    return new NextResponse("Authentication required", {
-      status: 401,
-      headers: {
-        "WWW-Authenticate": 'Basic realm="Admin Area"',
-      },
-    });
+  if (!authHeader || !authHeader.startsWith("Basic ")) {
+    return unauthorized();
   }
 
-  const [scheme, encoded] = authHeader.split(" ");
+  const encoded = authHeader.replace("Basic ", "");
 
-  if (scheme !== "Basic" || !encoded) {
-    return new NextResponse("Invalid authentication", {
-      status: 401,
-      headers: {
-        "WWW-Authenticate": 'Basic realm="Admin Area"',
-      },
-    });
+  let decoded = "";
+
+  try {
+    decoded = atob(encoded);
+  } catch {
+    return unauthorized("Invalid authentication");
   }
 
-  const decoded = atob(encoded);
   const separatorIndex = decoded.indexOf(":");
+
+  if (separatorIndex === -1) {
+    return unauthorized("Invalid authentication");
+  }
 
   const username = decoded.slice(0, separatorIndex);
   const password = decoded.slice(separatorIndex + 1);
@@ -36,12 +47,7 @@ export function proxy(request: NextRequest) {
   const isValid = username === ADMIN_USERNAME && password === adminPassword;
 
   if (!isValid) {
-    return new NextResponse("Invalid username or password", {
-      status: 401,
-      headers: {
-        "WWW-Authenticate": 'Basic realm="Admin Area"',
-      },
-    });
+    return unauthorized("Invalid username or password");
   }
 
   return NextResponse.next();
