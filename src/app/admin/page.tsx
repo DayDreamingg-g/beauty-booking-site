@@ -412,6 +412,40 @@ function BulkDeleteBar({
   );
 }
 
+function AdminNavLinks() {
+  return (
+    <>
+      <a href="/" className="admin-nav-link admin-nav-main">
+        ← На сайт
+      </a>
+
+      <a href="#quick-add" className="admin-nav-link">
+        + Додати
+      </a>
+
+      <a href="#bookings" className="admin-nav-link">
+        Заявки
+      </a>
+
+      <a href="#services-list" className="admin-nav-link">
+        Послуги
+      </a>
+
+      <a href="#masters-list" className="admin-nav-link">
+        Майстри
+      </a>
+
+      <a href="#portfolio-list" className="admin-nav-link">
+        Портфоліо
+      </a>
+
+      <a href="#reviews-list" className="admin-nav-link">
+        Відгуки
+      </a>
+    </>
+  );
+}
+
 async function createService(formData: FormData) {
   "use server";
 
@@ -879,6 +913,18 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
   return (
     <main className="min-h-screen bg-black px-4 py-8 text-white sm:px-5 md:px-6 md:py-10">
+      <input id="admin-mobile-menu" type="checkbox" className="admin-menu-check" />
+
+      <label htmlFor="admin-mobile-menu" className="admin-mobile-menu-button">
+        <span />
+        <span />
+        <span />
+      </label>
+
+      <div className="admin-mobile-menu-panel">
+        <AdminNavLinks />
+      </div>
+
       <div className="mx-auto w-full max-w-7xl">
         <div className="mb-6">
           <p className="mb-3 text-xs uppercase tracking-[0.28em] text-gray-500">
@@ -895,56 +941,9 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </p>
         </div>
 
-        <div className="mb-8 overflow-x-auto rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-3 backdrop-blur-xl">
+        <div className="admin-desktop-nav mb-8 overflow-x-auto rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-3 backdrop-blur-xl">
           <div className="flex min-w-max gap-2">
-            <a
-              href="/"
-              className="rounded-full border border-white/20 bg-white px-4 py-2 text-sm font-semibold text-black transition hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(255,255,255,0.16)]"
-            >
-              ← На сайт
-            </a>
-
-            <a
-              href="#quick-add"
-              className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm text-gray-300 transition hover:border-white/20 hover:bg-white/[0.10] hover:text-white"
-            >
-              + Додати
-            </a>
-
-            <a
-              href="#bookings"
-              className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm text-gray-300 transition hover:border-white/20 hover:bg-white/[0.10] hover:text-white"
-            >
-              Заявки
-            </a>
-
-            <a
-              href="#services-list"
-              className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm text-gray-300 transition hover:border-white/20 hover:bg-white/[0.10] hover:text-white"
-            >
-              Послуги
-            </a>
-
-            <a
-              href="#masters-list"
-              className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm text-gray-300 transition hover:border-white/20 hover:bg-white/[0.10] hover:text-white"
-            >
-              Майстри
-            </a>
-
-            <a
-              href="#portfolio-list"
-              className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm text-gray-300 transition hover:border-white/20 hover:bg-white/[0.10] hover:text-white"
-            >
-              Портфоліо
-            </a>
-
-            <a
-              href="#reviews-list"
-              className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm text-gray-300 transition hover:border-white/20 hover:bg-white/[0.10] hover:text-white"
-            >
-              Відгуки
-            </a>
+            <AdminNavLinks />
           </div>
         </div>
 
