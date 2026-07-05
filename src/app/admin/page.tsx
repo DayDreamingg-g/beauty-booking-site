@@ -4,6 +4,7 @@ import path from "path";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import BookingStatusActions from "./BookingStatusActions";
+import AdminQuickNav from "./AdminQuickNav";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -226,7 +227,7 @@ function AdminSelect({
   children: ReactNode;
 }) {
   return (
-    <div className="group relative">
+    <div className="group relative min-w-0">
       <select
         name={name}
         defaultValue={defaultValue}
@@ -263,14 +264,14 @@ function TextInput({
       type={type}
       defaultValue={defaultValue}
       placeholder={placeholder}
-      className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-black/60"
+      className="min-w-0 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-black/60"
     />
   );
 }
 
 function PriceInput({ defaultValue }: { defaultValue?: string }) {
   return (
-    <div className="relative">
+    <div className="relative min-w-0">
       <input
         name="price"
         type="number"
@@ -278,7 +279,7 @@ function PriceInput({ defaultValue }: { defaultValue?: string }) {
         step="1"
         defaultValue={defaultValue}
         placeholder="700"
-        className="w-full appearance-none rounded-2xl border border-white/10 bg-black/40 px-4 py-3 pr-12 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-black/60 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        className="w-full min-w-0 appearance-none rounded-2xl border border-white/10 bg-black/40 px-4 py-3 pr-12 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-black/60 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
       />
 
       <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">
@@ -296,8 +297,8 @@ function DurationInputs({
   defaultMinutes?: string;
 }) {
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div className="relative">
+    <div className="grid min-w-0 grid-cols-2 gap-3">
+      <div className="relative min-w-0">
         <input
           name="durationHours"
           type="number"
@@ -305,7 +306,7 @@ function DurationInputs({
           step="1"
           defaultValue={defaultHours}
           placeholder="1"
-          className="w-full appearance-none rounded-2xl border border-white/10 bg-black/40 px-4 py-3 pr-16 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-black/60 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          className="h-12 w-full min-w-0 appearance-none rounded-2xl border border-white/10 bg-black/40 px-4 pr-12 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-black/60 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
 
         <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-500">
@@ -313,7 +314,7 @@ function DurationInputs({
         </span>
       </div>
 
-      <div className="relative">
+      <div className="relative min-w-0">
         <input
           name="durationMinutes"
           type="number"
@@ -322,7 +323,7 @@ function DurationInputs({
           step="1"
           defaultValue={defaultMinutes}
           placeholder="0"
-          className="w-full appearance-none rounded-2xl border border-white/10 bg-black/40 px-4 py-3 pr-16 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-black/60 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          className="h-12 w-full min-w-0 appearance-none rounded-2xl border border-white/10 bg-black/40 px-4 pr-10 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-black/60 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
 
         <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-500">
@@ -349,7 +350,7 @@ function TextArea({
       name={name}
       defaultValue={defaultValue}
       placeholder={placeholder}
-      className={`${minHeight} resize-none rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-black/60`}
+      className={`${minHeight} min-w-0 resize-none rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-white/30 focus:bg-black/60`}
     />
   );
 }
@@ -360,7 +361,7 @@ function FileInput() {
       name="imageFile"
       type="file"
       accept="image/png,image/jpeg,image/jpg,image/webp"
-      className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-gray-300 file:mr-4 file:rounded-full file:border-0 file:bg-white file:px-4 file:py-2 file:text-sm file:font-semibold file:text-black"
+      className="min-w-0 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-gray-300 file:mr-4 file:rounded-full file:border-0 file:bg-white file:px-4 file:py-2 file:text-sm file:font-semibold file:text-black"
     />
   );
 }
@@ -409,40 +410,6 @@ function BulkDeleteBar({
         {buttonText}
       </button>
     </form>
-  );
-}
-
-function AdminNavLinks() {
-  return (
-    <>
-      <a href="/" className="admin-nav-link admin-nav-main">
-        ← На сайт
-      </a>
-
-      <a href="#quick-add" className="admin-nav-link">
-        + Додати
-      </a>
-
-      <a href="#bookings" className="admin-nav-link">
-        Заявки
-      </a>
-
-      <a href="#services-list" className="admin-nav-link">
-        Послуги
-      </a>
-
-      <a href="#masters-list" className="admin-nav-link">
-        Майстри
-      </a>
-
-      <a href="#portfolio-list" className="admin-nav-link">
-        Портфоліо
-      </a>
-
-      <a href="#reviews-list" className="admin-nav-link">
-        Відгуки
-      </a>
-    </>
   );
 }
 
@@ -912,21 +879,11 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   ];
 
   return (
-    <main className="min-h-screen bg-black px-4 py-8 text-white sm:px-5 md:px-6 md:py-10">
-      <input id="admin-mobile-menu" type="checkbox" className="admin-menu-check" />
+    <main className="min-h-screen bg-black pt-20 text-white">
+      <AdminQuickNav />
 
-      <label htmlFor="admin-mobile-menu" className="admin-mobile-menu-button">
-        <span />
-        <span />
-        <span />
-      </label>
-
-      <div className="admin-mobile-menu-panel">
-        <AdminNavLinks />
-      </div>
-
-      <div className="mx-auto w-full max-w-7xl">
-        <div className="mb-6">
+      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-5 md:px-6 md:py-10">
+        <div className="mb-10">
           <p className="mb-3 text-xs uppercase tracking-[0.28em] text-gray-500">
             Admin Panel
           </p>
@@ -941,13 +898,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </p>
         </div>
 
-        <div className="admin-desktop-nav mb-8 overflow-x-auto rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-3 backdrop-blur-xl">
-          <div className="flex min-w-max gap-2">
-            <AdminNavLinks />
-          </div>
-        </div>
-
-        <section id="quick-add" className="mb-12 scroll-mt-24">
+        <section id="quick-add" className="mb-12 scroll-mt-28">
           <div className="mb-5">
             <p className="mb-2 text-xs uppercase tracking-[0.24em] text-gray-500">
               Quick Add
@@ -964,7 +915,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           <div className="grid gap-5 xl:grid-cols-3">
             <form
               action={createService}
-              className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 md:p-6"
+              className="flex h-full flex-col rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 md:p-6"
             >
               <div className="mb-5 flex items-center justify-between gap-4">
                 <div>
@@ -980,10 +931,10 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 </span>
               </div>
 
-              <div className="grid gap-4">
+              <div className="flex flex-1 flex-col gap-4">
                 <TextInput name="title" placeholder="Назва послуги" />
 
-                <div className="grid gap-4 sm:grid-cols-[1fr_1.2fr]">
+                <div className="grid min-w-0 gap-4 sm:grid-cols-[140px_minmax(0,1fr)]">
                   <PriceInput />
                   <DurationInputs />
                 </div>
@@ -1000,7 +951,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
                 <button
                   type="submit"
-                  className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:scale-[1.02]"
+                  className="mt-auto rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:scale-[1.02]"
                 >
                   Додати послугу
                 </button>
@@ -1009,7 +960,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
             <form
               action={createMaster}
-              className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 md:p-6"
+              className="flex h-full flex-col rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 md:p-6"
             >
               <div className="mb-5 flex items-center justify-between gap-4">
                 <div>
@@ -1025,7 +976,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 </span>
               </div>
 
-              <div className="grid gap-4">
+              <div className="flex flex-1 flex-col gap-4">
                 <TextInput name="name" placeholder="Ім’я" />
                 <TextInput name="role" placeholder="Роль / спеціалізація" />
                 <FileInput />
@@ -1033,7 +984,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
                 <button
                   type="submit"
-                  className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:scale-[1.02]"
+                  className="mt-auto rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:scale-[1.02]"
                 >
                   Додати майстра
                 </button>
@@ -1042,7 +993,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
             <form
               action={createPortfolioItem}
-              className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 md:p-6"
+              className="flex h-full flex-col rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 md:p-6"
             >
               <div className="mb-5 flex items-center justify-between gap-4">
                 <div>
@@ -1058,7 +1009,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 </span>
               </div>
 
-              <div className="grid gap-4">
+              <div className="flex flex-1 flex-col gap-4">
                 <FileInput />
 
                 <AdminSelect name="serviceId" placeholder="Оберіть послугу">
@@ -1091,7 +1042,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
                 <button
                   type="submit"
-                  className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:scale-[1.02]"
+                  className="mt-auto rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:scale-[1.02]"
                 >
                   Додати роботу
                 </button>
@@ -1100,7 +1051,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </div>
         </section>
 
-        <section id="bookings" className="mb-12 scroll-mt-24">
+        <section id="bookings" className="mb-12 scroll-mt-28">
           <div className="mb-5">
             <p className="mb-2 text-xs uppercase tracking-[0.24em] text-gray-500">
               Bookings
@@ -1154,7 +1105,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                   key={filter.value}
                   href={`/admin?status=${filter.value}${
                     searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ""
-                  }#bookings`}
+                  }`}
                   className={`rounded-full border px-4 py-2 text-sm transition ${
                     statusFilter === filter.value
                       ? "border-white/30 bg-white text-black"
@@ -1167,7 +1118,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             </div>
 
             <form
-              action="/admin#bookings"
+              action="/admin"
               className="flex w-full gap-2 md:max-w-md"
             >
               <input type="hidden" name="status" value={statusFilter} />
@@ -1320,7 +1271,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           )}
         </section>
 
-        <section id="services-list" className="mb-12 scroll-mt-24">
+        <section id="services-list" className="mb-12 scroll-mt-28">
           <div className="mb-5">
             <p className="mb-2 text-xs uppercase tracking-[0.24em] text-gray-500">
               Services
@@ -1361,7 +1312,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                       value={String(service.isActive)}
                     />
 
-                    <div className="grid gap-4 lg:grid-cols-[1fr_220px_260px]">
+                    <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_160px_320px]">
                       <TextInput name="title" defaultValue={service.title} />
 
                       <PriceInput defaultValue={getPriceValue(service.price)} />
@@ -1428,7 +1379,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </div>
         </section>
 
-        <section id="masters-list" className="mb-12 scroll-mt-24">
+        <section id="masters-list" className="mb-12 scroll-mt-28">
           <div className="mb-5">
             <p className="mb-2 text-xs uppercase tracking-[0.24em] text-gray-500">
               Masters
@@ -1540,7 +1491,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </div>
         </section>
 
-        <section id="portfolio-list" className="mb-12 scroll-mt-24">
+        <section id="portfolio-list" className="mb-12 scroll-mt-28">
           <div className="mb-5">
             <p className="mb-2 text-xs uppercase tracking-[0.24em] text-gray-500">
               Portfolio
@@ -1687,7 +1638,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </div>
         </section>
 
-        <section id="reviews-list" className="scroll-mt-24">
+        <section id="reviews-list" className="scroll-mt-28">
           <div className="mb-5">
             <p className="mb-2 text-xs uppercase tracking-[0.24em] text-gray-500">
               Reviews
@@ -1708,7 +1659,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
             <div className="flex flex-wrap gap-2">
               <a
-                href="/admin?reviewMaster=all#reviews-list"
+                href="/admin?reviewMaster=all"
                 className={`rounded-full border px-4 py-2 text-sm transition ${
                   reviewMasterFilter === "all"
                     ? "border-white/30 bg-white text-black"
@@ -1721,7 +1672,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               {masters.map((master) => (
                 <a
                   key={master.id}
-                  href={`/admin?reviewMaster=${master.id}#reviews-list`}
+                  href={`/admin?reviewMaster=${master.id}`}
                   className={`rounded-full border px-4 py-2 text-sm transition ${
                     reviewMasterFilter === master.id
                       ? "border-white/30 bg-white text-black"

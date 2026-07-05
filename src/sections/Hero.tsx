@@ -121,11 +121,11 @@ export default function Hero({
         <div className="relative w-full">
           <div className="pointer-events-none absolute -inset-6 rounded-[2.5rem] bg-white/[0.03] blur-2xl" />
 
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.03] shadow-[0_0_80px_rgba(255,255,255,0.06)] backdrop-blur-sm md:rounded-[2rem]">
+          <div className="relative mx-auto aspect-[1195/1316] w-full max-w-[650px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-[0_30px_100px_rgba(0,0,0,0.45)]">
             <img
               src="/images/beautystudio.jpg"
-              alt="Робота студії"
-              className="h-full w-full object-cover opacity-95 transition duration-700 hover:scale-105"
+              alt="Beauty studio"
+              className="h-full w-full object-cover"
             />
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />

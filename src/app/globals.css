@@ -49,7 +49,7 @@ video {
 }
 
 section {
-  scroll-margin-top: 96px;
+  scroll-margin-top: 120px;
 }
 
 input,
@@ -101,17 +101,37 @@ input[type="number"]::-webkit-outer-spin-button {
   background-size: 14px 14px;
 }
 
-/* ADMIN NAV */
+/* ADMIN DESKTOP HEADER */
 .admin-desktop-nav {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 999 !important;
   display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 0 !important;
+  background: rgba(0, 0, 0, 0.82) !important;
+  padding: 0 !important;
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.45);
 }
 
-.admin-menu-check {
-  display: none;
+.admin-desktop-nav-inner {
+  display: flex;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.85rem 1rem;
+  scrollbar-width: none;
 }
 
-.admin-mobile-menu-button,
-.admin-mobile-menu-panel {
+.admin-desktop-nav-inner::-webkit-scrollbar {
   display: none;
 }
 
@@ -123,23 +143,24 @@ input[type="number"]::-webkit-outer-spin-button {
   white-space: nowrap;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.055);
+  padding: 0.55rem 1rem;
   font-size: 0.875rem;
   color: rgb(209, 213, 219);
+  text-decoration: none;
   transition: 0.2s ease;
 }
 
 .admin-nav-link:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.11);
   color: white;
 }
 
 .admin-nav-main {
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.25);
   background: white;
-  font-weight: 600;
+  font-weight: 700;
   color: black;
 }
 
@@ -147,6 +168,16 @@ input[type="number"]::-webkit-outer-spin-button {
   background: white;
   color: black;
   transform: scale(1.02);
+}
+
+/* ADMIN MOBILE MENU */
+.admin-menu-check {
+  display: none;
+}
+
+.admin-mobile-menu-button,
+.admin-mobile-menu-panel {
+  display: none;
 }
 
 @keyframes modalIn {
@@ -161,10 +192,7 @@ input[type="number"]::-webkit-outer-spin-button {
   }
 }
 
-/* ========================= */
-/* MOBILE UI POLISH */
-/* ========================= */
-
+/* MOBILE UI */
 @media (max-width: 768px) {
   body {
     background: #000;
@@ -383,6 +411,7 @@ input[type="number"]::-webkit-outer-spin-button {
     grid-template-columns: 1fr !important;
   }
 
+  main.bg-black .lg\:grid-cols-\[minmax\(0\,1fr\)_160px_320px\],
   main.bg-black .lg\:grid-cols-\[1fr_220px_260px\],
   main.bg-black .lg\:grid-cols-\[1fr_1fr\],
   main.bg-black .lg\:grid-cols-3,
@@ -461,7 +490,6 @@ input[type="number"]::-webkit-outer-spin-button {
     min-width: 20px !important;
   }
 
-  /* ADMIN MOBILE MENU LIKE MAIN PAGE */
   .admin-desktop-nav {
     display: none !important;
   }
@@ -543,10 +571,7 @@ input[type="number"]::-webkit-outer-spin-button {
   }
 }
 
-/* ========================= */
 /* SMALL PHONES */
-/* ========================= */
-
 @media (max-width: 480px) {
   section {
     padding-top: 64px !important;
